@@ -1,255 +1,200 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './HomePage.css';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
-import StarRating from '../../components/StarRating/StarRating';
-import ProductCard from '../../components/ProductCard/ProductCard';
-import { productAPI } from '../../services/api';
+import React from 'react';
+import Navbar from '../../components/Navbar/Navbar.jsx';
+import Footer from '../../components/Footer/Footer.jsx';
+import styles from './Home.module.css';
 
-const HomePage = () => {
-  const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export default function HomePage() {
+    const statsData = [
+        { number: '15K+', label: 'Students' },
+        { number: '75%', label: 'Total success' },
+        { number: '35', label: 'Main questions' },
+        { number: '26', label: 'Lectures' }
+    ];
 
-  // Fetch products from database
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const data = await productAPI.getAllProducts();
-        
-        // Transform products to match expected format
-        const transformedProducts = data.map((product) => ({
-          ...product,
-          id: product._id || product.productId,
-          title: product.name,
-          img: product.images && product.images.length > 0 
-            ? `http://localhost:5000${product.images[0]}`
-            : '/img/placeholder-plant.jpg',
-          rating: product.rating || 4,
-          category: product.category || 'General'
-        }));
-        
-        // Get only 3 products for homepage
-        const featuredProducts = transformedProducts.slice(0, 3);
-        setProducts(featuredProducts);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setError("Failed to load products. Please try again later.");
-        
-        // Fallback to sample data if API fails
-        setProducts([
-          {
-            id: 1,
-            name: "Artificial Plant Deluxe",
-            title: "Artificial Plant Deluxe",
-            image: "/img/img3.png",
-            img: "/img/img3.png",
-            price: 239.00,
-            rating: 4,
-            description: "Premium quality artificial plant that looks completely real",
-            category: "Artificial Plants"
-          },
-          {
-            id: 2,
-            name: "Premium Ficus Tree",
-            title: "Premium Ficus Tree",
-            image: "/img/img4.jpg",
-            img: "/img/img4.jpg",
-            price: 329.00,
-            rating: 5,
-            description: "Beautiful ficus tree perfect for home or office",
-            category: "Natural Plants"
-          },
-          {
-            id: 3,
-            name: "Mini Succulent Set",
-            title: "Mini Succulent Set",
-            image: "/img/img5.jpg",
-            img: "/img/img5.jpg",
-            price: 139.00,
-            rating: 3,
-            description: "Set of 3 small succulents in decorative pots",
-            category: "Natural Plants"
-          }
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const features = [
+        {
+            icon: 'fas fa-file-alt',
+            title: 'Well Prepared lecture readings, Downloads & Assignments',
+            description: 'Well-prepared lectures with detailed readings, reference, first reading assignments help students with clear, structured, and accessible learning resources.'
+        },
+        {
+            icon: 'fas fa-calendar-alt',
+            title: 'Easy Scheduling & Conducting Courses',
+            description: 'Easy scheduling and conducting of courses allows instructors to plan lessons without restriction, ensuring a smooth learning experience for students.'
+        },
+        {
+            icon: 'fas fa-users',
+            title: 'User Tracking',
+            description: 'User tracking enables instructors of student activities and progress, helping improve student learning performance and engagement for better support and improvement.'
+        }
+    ];
 
-    fetchProducts();
-  }, []);
-
-  const handleProductClick = (product) => {
-    navigate(`/productoverview/${product.id}`, { state: { product } });
-  };
-
-  const handleSeeMoreClick = () => {
-    navigate('/products');
-  };
-
-  const handleExploreClick = () => {
-    navigate('/products');
-  };
-
-  if (loading) {
     return (
-      <div className="homepage">
-        <Navbar />
-        <div className="loading">Loading...</div>
-        <Footer />
-      </div>
+        <div className={styles.homePage}>
+            <Navbar />
+            
+            {/* Hero Section */}
+            <section className={styles.heroSection}>
+                <div className={styles.heroContainer}>
+                    <div className={styles.heroContent}>
+                        <h1 className={styles.heroTitle}>
+                            <span className={styles.studying}>Studying</span>
+                            <span className={styles.online}> Online is now<br />much easier</span>
+                        </h1>
+                        <p className={styles.heroSubtitle}>
+                            TOTC is an interesting platform that will teach<br />
+                            you in more an interactive way
+                        </p>
+                        <button className={styles.joinBtn}>Join for free</button>
+                    </div>
+                    <div className={styles.heroImage}>
+                        <img 
+                            src="/heroimg.png" 
+                            alt="Student with books"
+                            className={styles.studentImage}
+                            
+                        />
+                        
+                    </div>
+                </div>
+                <div className={styles.waveBottom}></div>
+            </section>
+
+            {/* Success Section */}
+            <section className={styles.successSection}>
+                <div className={styles.container}>
+                    <h2 className={styles.successTitle}>Our Success</h2>
+                    <p className={styles.successSubtitle}>
+                        Ornare id fames interdum porttitor nulla turpis etiam. Duis vitae sollicitudin et nec<br />
+                        urna ut tincidunt. Adipiscing at nunc lorem elit leo tellus mollis mauris tellus dui orci.
+                    </p>
+                    
+                    <div className={styles.statsContainer}>
+                        {statsData.map((stat, index) => (
+                            <div key={index} className={styles.statItem}>
+                                <div className={styles.statNumber}>{stat.number}</div>
+                                <div className={styles.statLabel}>{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Features Section */}
+            <section className={styles.featuresSection}>
+                <div className={styles.container}>
+                    <h2 className={styles.featuresTitle}>
+                        All-In-One <span className={styles.cloudSoftware}>Cloud Software.</span>
+                    </h2>
+                    <p className={styles.featuresSubtitle}>
+                        TOTC is one powerful online software suite that combines all the tools<br />
+                        needed to run a successful school or office.
+                    </p>
+                    
+                    <div className={styles.featuresGrid}>
+                        
+                            <div  className={styles.featureCard}>
+                                <div className={styles.featureIcon}>
+                                    <i></i>
+                                </div>
+                                <h3 className={styles.featureTitle}>Well Prepared lecture readings, Downloads & Assignments</h3>
+                                <p className={styles.featureDescription}>Well-prepared lectures with detailed readings, reference, first reading assignments help students with clear, structured, and accessible learning resources.</p>
+                            </div>
+
+                            <div  className={styles.featureCard}>
+                                <div className={styles.featureIcon1}>
+                                    <i></i>
+                                </div>
+                                <h3 className={styles.featureTitle}>Easy Scheduling & Conducting Courses</h3>
+                                <p className={styles.featureDescription}>Easy scheduling and conducting of courses allows instructors to plan lessons without restriction, ensuring a smooth learning experience for students.</p>
+                            </div>
+
+                            <div  className={styles.featureCard}>
+                                <div className={styles.featureIcon2}>
+                                    <i></i>
+                                </div>
+                                <h3 className={styles.featureTitle}>User Tracking</h3>
+                                <p className={styles.featureDescription}>User tracking enables instructors of student activities and progress, helping improve student learning performance and engagement for better support and improvement.</p>
+                            </div>
+                       
+                    </div>
+                </div>
+            </section>
+
+            {/* What is TOTC Section */}
+            <section className={styles.totcSection}>
+                <div className={styles.container}>
+                    <h2 className={styles.totcTitle}>
+                        What is <span className={styles.totcHighlight}>TOTC?</span>
+                    </h2>
+                    <p className={styles.totcDescription}>
+                        TOTC is a platform that allows educators to create online classes whereby they can<br />
+                        store the course materials online; manage assignments, quizzes and exams; monitor<br />
+                        due dates; grade results and provide students with feedback all in one place.
+                    </p>
+                    
+                    <div className={styles.totcCards}>
+                        <div className={styles.totcCard}>
+                            <div className={styles.cardOverlay}>
+                                <h3 className={styles.cardTitle}>FOR INSTRUCTORS</h3>
+                                <button className={styles.cardBtn}>Access to course</button>
+                            </div>
+                            <img 
+                                src="/instructor.png" 
+                                alt="For Instructors"
+                                className={styles.cardImage}
+                                
+                            />
+                        </div>
+                        
+                        <div className={styles.totcCard}>
+                            <div className={styles.cardOverlay}>
+                                <h3 className={styles.cardTitle}>FOR STUDENTS</h3>
+                                <button className={styles.cardBtn}>Access to course</button>
+                            </div>
+                            <img 
+                                src="/student.png" 
+                                alt="For Students"
+                                className={styles.cardImage}
+                               
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Testimonial Section */}
+            <section className={styles.testimonialSection}>
+                <div className={styles.container}>
+                    <div className={styles.testimonialContent}>
+                        <div className={styles.testimonialText}>
+                            <div className={styles.testimonialLabel}>TESTIMONIAL</div>
+                            <h2 className={styles.testimonialTitle}>What They Say?</h2>
+                            <p className={styles.testimonialQuote}>
+                                TOTC has got more than 100k positive ratings<br />
+                                from our users around the world.
+                            </p>
+                            <p className={styles.testimonialDetail}>
+                                Some of the students and teachers were<br />
+                                greatly helped by the Skilline.
+                            </p>
+                            <p className={styles.testimonialQuestion}>
+                                Are you too? Please give your assessment
+                            </p>
+                        </div>
+                        <div className={styles.testimonialImage}>
+                            <img 
+                                src="/testimonial.png" 
+                                alt="Happy student"
+                                className={styles.happyStudent}
+                               
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <Footer />
+        </div>
     );
-  }
-
-  return (
-    <div className="homepage">
-      <Navbar />
-      
-      {/* Hero Section */}
-      <section className="hero-section">
-        <div className="hero-content">
-          <div className="hero-text">
-            <h1>Buy your dream <br/>plants</h1>
-            <div className="hero-stats">
-              <div className="stats-container">
-                <div className="stat">
-                  <span className="stat-number">50+</span>
-                  <span className="stat-label">Plant Species</span>
-                </div>
-                <div className="divider"></div>
-                <div className="stat">
-                  <span className="stat-number">100+</span>
-                  <span className="stat-label">Customers</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="hero-images">
-            <img src="/img/img1.jpg" alt="Plant collection" className="hero-img-main" />
-            <img src="/img/img2.jpg" alt="Plant detail" className="hero-img-small" />
-          </div>
-        </div>
-      </section>
-
-      {/* Best Selling Plants */}
-      <section className="best-selling">
-        <div className="section-header">
-          <h2>Best Selling <br/>Plants</h2>
-          <p>Easiest way to <br/>healthy life by buying <br/>your favorite plants</p>
-          <button className="see-more-btn" onClick={handleSeeMoreClick}>
-            See more →
-          </button>
-        </div>
-        
-        <div className="plants-grid">
-          {products.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product}
-              onClick={() => handleProductClick(product)}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* About Us */}
-      <section className="about-us">
-        <h2>About us</h2>
-        <p>Order now and appreciate the beauty of nature</p>
-        
-        <div className="features-grid">
-          <div className="feature">
-            <div className="feature-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 3h18v18h-18z"/>
-                <path d="M9 9h6v6h-6z"/>
-              </svg>
-            </div>
-            <h3>Large Assortment</h3>
-            <p>We offer many different types of products with fewer variations in each category.</p>
-          </div>
-          <div className="feature">
-            <div className="feature-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="1" y="3" width="15" height="13"/>
-                <polygon points="16,3 21,8 21,21 16,16 16,3"/>
-              </svg>
-            </div>
-            <h3>Fast & Free Shipping</h3>
-            <p>4-day or less delivery time, free shipping and an expedited delivery option.</p>
-          </div>
-          <div className="feature">
-            <div className="feature-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-            </div>
-            <h3>24/7 Support</h3>
-            <p>Answers to any business related inquiry 24/7 and in real-time.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="categories-section">
-        <h2>Categories</h2>
-        <p>Find what you are looking for</p>
-
-        <div className="categories-grid">
-          <div className="category-card">
-            <img src="/img/img6.jpg" alt="Natural Plants" />
-            <div className="category-overlay">
-              <h3>Natural Plants</h3>
-            </div>
-          </div>
-          <div className="category-card">
-            <img src="/img/img7.jpg" alt="Plant Accessories" />
-            <div className="category-overlay">
-              <h3>Plant Accessories</h3>
-              <p>Horem ipsum dolor sit amet</p>
-            </div>
-          </div>
-          <div className="category-card">
-            <img src="/img/img8.jpg" alt="Artificial Plants" />
-            <div className="category-overlay">
-              <h3>Artificial Plants</h3>
-            </div>
-          </div>
-
-          <button className="explore-btn" onClick={handleExploreClick}>
-            Explore →
-          </button>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="testimonials">
-        <h2>What customers say about GREEMIND?</h2>
-        
-        <div className="testimonials-grid">
-          <div className="testimonial-card">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-            <div className="testimonial-author">
-              <strong>John Doe</strong>
-            </div>
-          </div>
-          <div className="testimonial-card">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</p>
-            <div className="testimonial-author">
-              <strong>John Doe</strong>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
-  );
-};
-
-export default HomePage;
+}
