@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../../components/Navbar/Navbar.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
 import styles from './Home.module.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function HomePage() {
     const statsData = [
@@ -11,23 +12,7 @@ export default function HomePage() {
         { number: '26', label: 'Lectures' }
     ];
 
-    const features = [
-        {
-            icon: 'fas fa-file-alt',
-            title: 'Well Prepared lecture readings, Downloads & Assignments',
-            description: 'Well-prepared lectures with detailed readings, reference, first reading assignments help students with clear, structured, and accessible learning resources.'
-        },
-        {
-            icon: 'fas fa-calendar-alt',
-            title: 'Easy Scheduling & Conducting Courses',
-            description: 'Easy scheduling and conducting of courses allows instructors to plan lessons without restriction, ensuring a smooth learning experience for students.'
-        },
-        {
-            icon: 'fas fa-users',
-            title: 'User Tracking',
-            description: 'User tracking enables instructors of student activities and progress, helping improve student learning performance and engagement for better support and improvement.'
-        }
-    ];
+ 
 
     return (
         <div className={styles.homePage}>
@@ -95,7 +80,7 @@ export default function HomePage() {
                         
                             <div  className={styles.featureCard}>
                                 <div className={styles.featureIcon}>
-                                    <i></i>
+                                    <i className='fas fa-file-alt'></i>
                                 </div>
                                 <h3 className={styles.featureTitle}>Well Prepared lecture readings, Downloads & Assignments</h3>
                                 <p className={styles.featureDescription}>Well-prepared lectures with detailed readings, reference, first reading assignments help students with clear, structured, and accessible learning resources.</p>
@@ -103,7 +88,7 @@ export default function HomePage() {
 
                             <div  className={styles.featureCard}>
                                 <div className={styles.featureIcon1}>
-                                    <i></i>
+                                    <i className='fas fa-calendar-alt'></i>
                                 </div>
                                 <h3 className={styles.featureTitle}>Easy Scheduling & Conducting Courses</h3>
                                 <p className={styles.featureDescription}>Easy scheduling and conducting of courses allows instructors to plan lessons without restriction, ensuring a smooth learning experience for students.</p>
@@ -111,7 +96,7 @@ export default function HomePage() {
 
                             <div  className={styles.featureCard}>
                                 <div className={styles.featureIcon2}>
-                                    <i></i>
+                                    <i className='fas fa-users'></i>
                                 </div>
                                 <h3 className={styles.featureTitle}>User Tracking</h3>
                                 <p className={styles.featureDescription}>User tracking enables instructors of student activities and progress, helping improve student learning performance and engagement for better support and improvement.</p>

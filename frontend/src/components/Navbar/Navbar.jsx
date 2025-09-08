@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styles from './Navbar.module.css';
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function Navbar() {
     // Mock authentication state - replace with your actual auth logic
