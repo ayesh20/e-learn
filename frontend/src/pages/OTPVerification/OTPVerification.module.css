@@ -1,0 +1,262 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Poltawski+Nowy:wght@700&display=swap');
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: clamp(30px, 5vw, 50px);
+  border-radius: 16px;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.1),
+    0 5px 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 480px;
+  min-width: 280px;
+  margin: 20px;
+  border: 1px solid rgba(73, 187, 189, 0.1);
+  text-align: center;
+}
+
+.title {
+  font-family: 'Poltawski Nowy', serif;
+  font-size: clamp(28px, 5vw, 32px);
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(14px, 3vw, 16px);
+  color: #718096;
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.email {
+  color: #49BBBD;
+  font-weight: 600;
+}
+
+.instruction {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(13px, 3vw, 14px);
+  color: #a0aec0;
+  margin-bottom: clamp(25px, 6vw, 35px);
+  font-weight: 400;
+  text-transform: lowercase;
+}
+
+.form {
+  width: 100%;
+  margin-bottom: clamp(20px, 5vw, 30px);
+}
+
+.otpContainer {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 12px);
+  margin-bottom: clamp(25px, 6vw, 35px);
+}
+
+.otpInput {
+  width: clamp(50px, 12vw, 60px);
+  height: clamp(60px, 14vw, 70px);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(20px, 5vw, 24px);
+  font-weight: 600;
+  text-align: center;
+  background: white;
+  transition: all 0.3s ease;
+  color: #2d3748;
+}
+
+.otpInput:focus {
+  outline: none;
+  border-color: #49BBBD;
+  box-shadow: 0 0 0 3px rgba(73, 187, 189, 0.1);
+  transform: translateY(-2px);
+}
+
+.otpInput:valid {
+  border-color: #48bb78;
+}
+
+.verifyButton {
+  width: 100%;
+  padding: clamp(14px, 3vw, 18px);
+  background: linear-gradient(135deg, #49BBBD 0%, #3aa5a7 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(15px, 3vw, 18px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 15px rgba(73, 187, 189, 0.3),
+    0 2px 4px rgba(73, 187, 189, 0.2);
+}
+
+.verifyButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(73, 187, 189, 0.4),
+    0 3px 6px rgba(73, 187, 189, 0.3);
+}
+
+.verifyButton:active {
+  transform: translateY(0);
+}
+
+.resendContainer {
+  margin-bottom: clamp(20px, 5vw, 30px);
+}
+
+.resendText {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(13px, 3vw, 14px);
+  color: #718096;
+  margin: 0;
+}
+
+.resendButton {
+  background: none;
+  border: none;
+  color: #49BBBD;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+.resendButton:hover:not(:disabled) {
+  color: #3aa5a7;
+  text-decoration: underline;
+}
+
+.resendButton:disabled {
+  color: #cbd5e0;
+  cursor: not-allowed;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  color: #49BBBD;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: clamp(13px, 3vw, 15px);
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(73, 187, 189, 0.05);
+}
+
+.backLink:hover {
+  color: #3aa5a7;
+  background: rgba(73, 187, 189, 0.1);
+  transform: translateX(-2px);
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 480px) {
+  .container {
+    padding: 15px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+  
+  .card {
+    margin: 0;
+    padding: 30px 25px;
+    border-radius: 12px;
+  }
+  
+  .otpContainer {
+    gap: 6px;
+  }
+  
+  .otpInput {
+    width: 45px;
+    height: 55px;
+    font-size: 18px;
+  }
+  
+  .verifyButton {
+    padding: 16px;
+  }
+}
+
+/* Tablet-specific optimizations */
+@media (min-width: 481px) and (max-width: 768px) {
+  .container {
+    padding: 30px;
+  }
+  
+  .card {
+    max-width: 420px;
+    padding: 40px 35px;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .verifyButton,
+  .otpInput,
+  .backLink {
+    transition: none;
+  }
+  
+  .verifyButton:hover,
+  .otpInput:focus {
+    transform: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  }
+  
+  .card {
+    background: #2d3748;
+    border-color: rgba(73, 187, 189, 0.2);
+  }
+  
+  .title {
+    color: #e2e8f0;
+  }
+  
+  .subtitle,
+  .instruction,
+  .resendText {
+    color: #a0aec0;
+  }
+  
+  .otpInput {
+    background: #4a5568;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  .otpInput:focus {
+    border-color: #49BBBD;
+    background: #4a5568;
+  }
+}

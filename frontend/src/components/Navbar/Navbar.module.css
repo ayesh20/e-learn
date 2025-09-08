@@ -1,306 +1,160 @@
-.navbar {
-    background: #a8d5d1;
-    padding: 0 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+/* Header.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Poltawski+Nowy:wght@700&display=swap');
+
+.header {
+  background-color: #49BBBD;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1000;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 70px;
+  min-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 90px;
 }
 
 /* Logo */
 .logo {
-    flex-shrink: 0;
+  font-family: 'Poltawski Nowy', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
 }
 
-.logoLink {
-    font-size: 32px;
-    font-weight: 700;
-    color: #2c3e50;
-    text-decoration: none;
-    letter-spacing: -1px;
+/* Navigation */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
 }
 
-/* Navigation Links */
-.navLinks {
-    display: flex;
-    gap: 40px;
-    align-items: center;
-    flex-grow: 1;
-    justify-content: center;
+.navLink {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 8px 0;
 }
 
-.nav-link {
-    color: #2c3e50;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 500;
-    padding: 10px 0;
-    position: relative;
-    transition: color 0.3s ease;
+.navLink:hover {
+  color: #eafaf9;
 }
 
-.nav-link:hover,
-.nav-link.active {
-    color: #1a252f;
+.navLink::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: white;
+  transition: width 0.3s ease;
 }
 
-.nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: #2c3e50;
-    border-radius: 2px;
+.navLink:hover::after {
+  width: 100%;
 }
 
-/* Message Icon */
-.messageIcon {
-    margin-right: 20px;
+.icon {
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.message-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    background: white;
-    border-radius: 10px;
-    color: #2c3e50;
-    text-decoration: none;
-    font-size: 18px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.icon:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
 }
 
-.message-link:hover,
-.message-link.active {
-    background: #f0f8ff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* User Section */
+.userSection {
+  display: flex;
+  align-items: center;
 }
 
-/* Authentication Section */
-.authSection {
-    flex-shrink: 0;
+.userBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 20px;
+  transition: background-color 0.2s ease;
 }
 
-/* Login Button */
-.loginBtn {
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.userBox:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.loginBtn:hover {
-    background: #1a252f;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  transition: transform 0.2s ease;
 }
 
-/* User Profile */
-.userProfile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-}
-
-.userInfo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 25px;
-    
-}
-
-.userAvatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.userBox:hover .avatar {
+  transform: scale(1.05);
 }
 
 .userName {
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
 }
 
-/* Dropdown */
-.dropdown {
-    position: relative;
-}
-
-.dropdownBtn {
-    background: none;
-    border: none;
-    color: #2c3e50;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.dropdownBtn:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.dropdownMenu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    padding: 10px 0;
-    min-width: 180px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-    z-index: 1001;
-}
-
-.dropdown:hover .dropdownMenu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdownItem {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 12px 20px;
-    color: #2c3e50;
-    text-decoration: none;
-    background: none;
-    border: none;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.dropdownItem:hover {
-    background: #f8f9fa;
-}
-
-.dropdownItem i {
-    width: 16px;
-    text-align: center;
-}
-
-/* Mobile Toggle */
-.mobileToggle {
-    display: none;
-}
-
-.toggleBtn {
-    background: none;
-    border: none;
-    color: #2c3e50;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 10px;
-}
-
-/* Mobile Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .container {
-        height: 60px;
-    }
-
-    .logoLink {
-        font-size: 24px;
-    }
-
-    .navLinks {
-        display: none;
-    }
-
-    .messageIcon {
-        margin-right: 10px;
-    }
-
-    .message-link {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
-    }
-
-    .userInfo {
-        padding: 6px 12px;
-    }
-
-    .userAvatar {
-        width: 35px;
-        height: 35px;
-    }
-
-    .userName {
-        font-size: 14px;
-    }
-
-    .mobileToggle {
-        display: block;
-        margin-left: 10px;
-    }
-
-    .loginBtn {
-        padding: 10px 20px;
-        font-size: 14px;
-    }
+  .container {
+    padding: 0 15px;
+  }
+  
+  .nav {
+    gap: 20px;
+  }
+  
+  .navLink {
+    font-size: 14px;
+  }
+  
+  .userName {
+    display: none;
+  }
 }
 
-@media (max-width: 480px) {
-    .navbar {
-        padding: 0 15px;
-    }
-
-    .logoLink {
-        font-size: 20px;
-    }
-
-    .userInfo {
-        padding: 4px 8px;
-    }
-
-    .userAvatar {
-        width: 30px;
-        height: 30px;
-    }
-
-    .userName {
-        display: none;
-    }
-
-    .message-link {
-        width: 35px;
-        height: 35px;
-        font-size: 14px;
-    }
+@media (max-width: 576px) {
+  .logo {
+    font-size: 24px;
+  }
+  
+  .nav {
+    gap: 15px;
+  }
+  
+  .navLink {
+    font-size: 13px;
+  }
+  
+  .icon {
+    font-size: 18px;
+  }
+  
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
 }

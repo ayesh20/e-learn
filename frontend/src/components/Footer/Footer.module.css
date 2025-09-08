@@ -1,174 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Poltawski+Nowy:wght@700&display=swap');
+
 .footer {
-    background: #3a3a52;
-    padding: 40px 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #252641;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  padding: 60px 20px 30px;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-}
-
-.branding {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    text-align: center;
+/* Top section with logo + tagline */
+.top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 40px;
 }
 
 .logo {
-    font-size: 36px;
-    font-weight: 600;
-    color: white;
-    margin: 0;
-    letter-spacing: -1px;
+  font-family: 'Poltawski Nowy', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  position: relative;
+  padding-right: 20px;
+}
+
+.logo::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .tagline {
-    color: #a0a0b8;
-    font-size: 16px;
-    line-height: 1.4;
-    margin: 0;
-    text-align: left;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.5;
+  text-align: left;
 }
 
-.socialMedia {
-    display: flex;
-    gap: 20px;
-    align-items: center;
+/* Social icons */
+.social {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 25px;
 }
 
-.socialLink {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    background: white;
-    border-radius: 50%;
-    color: #3a3a52;
-    text-decoration: none;
-    font-size: 20px;
-    transition: all 0.3s ease;
+.social a {
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #252641;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
 }
 
-.socialLink:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+.social a:hover {
+  background-color: #49BBBD;
+  border-color: #49BBBD;
 }
 
-.socialLink i {
-    font-size: 20px;
-}
-
+/* Links */
 .links {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
 }
 
-.footerLink {
-    color: #a0a0b8;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.3s ease;
-    white-space: nowrap;
+.links a {
+  font-size: 14px;
+  font-weight: 400;
+  color: #b3b3c9;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.footerLink:hover {
-    color: white;
+.links a:hover {
+  color: #49BBBD;
 }
 
-.separator {
-    color: #a0a0b8;
-    font-size: 14px;
-}
-
-.copyright {
-    text-align: center;
-}
-
-.copyright p {
-    color: #a0a0b8;
-    font-size: 14px;
-    margin: 0;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .footer {
-        padding: 30px 15px;
-    }
-
-    .container {
-        gap: 20px;
-    }
-
-    .branding {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-
-    .logo {
-        font-size: 28px;
-    }
-
-    .tagline {
-        text-align: center;
-        font-size: 14px;
-    }
-
-    .socialMedia {
-        gap: 15px;
-    }
-
-    .socialLink {
-        width: 45px;
-        height: 45px;
-        font-size: 18px;
-    }
-
-    .links {
-        gap: 10px;
-        flex-direction: column;
-    }
-
-    .separator {
-        display: none;
-    }
-
-    .footerLink {
-        font-size: 13px;
-    }
-
-    .copyright p {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 480px) {
-    .branding {
-        gap: 10px;
-    }
-
-    .logo {
-        font-size: 24px;
-    }
-
-    .socialMedia {
-        gap: 12px;
-    }
-
-    .social-link {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
-    }
+/* Bottom */
+.bottom {
+  font-size: 13px;
+  color: #a5a5bf;
 }

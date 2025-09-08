@@ -1,0 +1,273 @@
+/* InstructorDashboard.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Poltawski+Nowy:wght@700&display=swap');
+
+.dashboard {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main Content */
+.mainContent {
+  width: 100%;
+  padding-bottom: 40px;
+}
+
+/* Top Banner with spacing and rounded corners */
+.topBanner {
+  width: 90%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  margin: 30px auto;
+  border-radius: 12px;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Courses Header */
+.coursesHeader {
+  background-color: #fff;
+  padding: 20px 0;
+  border-bottom: 1px solid #e2e8f0;
+  width: 100%;
+}
+
+.headerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.courseBtn {
+  font-family: 'Poppins', sans-serif;
+  padding: 10px 20px;
+  background-color: #49BBBD;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.courseBtn:hover {
+  background-color: #3aa5a7;
+}
+
+.addBtn {
+  font-family: 'Poppins', sans-serif;
+  padding: 10px 20px;
+  background-color: #49BBBD;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.addBtn:hover {
+  background-color: #3aa5a7;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.filterContainer {
+  position: relative;
+}
+
+.filterDropdown {
+  font-family: 'Poppins', sans-serif;
+  padding: 10px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #4a5568;
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 40px;
+  min-width: 150px;
+}
+
+.filterContainer::after {
+  content: '▼';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #718096;
+  pointer-events: none;
+  font-size: 12px;
+}
+
+/* White Background Content Area */
+.contentArea {
+  background-color: #fff;
+  width: 100%;
+  padding: 30px 0;
+  margin-top: 0;
+}
+
+/* Course Sections */
+.courseSection {
+  width: 100%;
+  margin: 40px 0;
+}
+
+.sectionContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.sectionTitle {
+  font-family: 'Poltawski Nowy', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 25px 0;
+  text-transform: uppercase;
+}
+
+/* Course Grid - 3 cards per row */
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+/* Pagination Section */
+.paginationSection {
+  width: 100%;
+  margin: 40px 0;
+}
+
+.paginationContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageBtn {
+  font-family: 'Poppins', sans-serif;
+  padding: 8px 12px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  min-width: 40px;
+  transition: all 0.2s ease;
+}
+
+.pageBtn:hover {
+  border-color: #49BBBD;
+  color: #49BBBD;
+}
+
+.pageBtn.activePage {
+  background-color: #49BBBD;
+  color: white;
+  border-color: #49BBBD;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .courseGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .topBanner {
+    height: 150px;
+    width: 95%;
+    margin: 20px auto;
+  }
+  
+  .headerContainer {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .headerLeft {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .courseGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .sectionTitle {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .topBanner {
+    height: 120px;
+    width: 95%;
+    margin: 15px auto;
+  }
+  
+  .headerContainer {
+    padding: 0 15px;
+  }
+  
+  .sectionContainer {
+    padding: 0 15px;
+  }
+  
+  .paginationContainer {
+    padding: 0 15px;
+  }
+  
+  .headerLeft {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .filterDropdown {
+    min-width: 120px;
+  }
+  
+  .sectionTitle {
+    font-size: 20px;
+  }
+}
