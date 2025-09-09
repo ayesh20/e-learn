@@ -6,11 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-
-import productRouter from "./routers/productRouter.js";
 import userRouter from "./routers/userRouter.js";
-import reviewRouter from "./routers/reviewRouter.js";
-import cartRouter from "./routers/cartRouter.js";
 
 dotenv.config();
 
@@ -54,10 +50,9 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(() => console.log("Failed to connect to the database"));
 
 // Routes
-app.use("/api/products", productRouter);
+
 app.use("/api/users", userRouter);
-app.use("/api/reviews", reviewRouter);
-app.use("/api/cart", cartRouter);
+;
 
 // Start server
 app.listen(5000, () => console.log("Server started on port 5000"));
