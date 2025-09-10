@@ -10,6 +10,8 @@ import SetNewPassword from './pages/SetNewPassword/SetNewPassword'
 import SuccessfulReset from './pages/SuccessfulReset/SuccessfulReset'
 import InstructorDashboard from './pages/InstructorDashboard/InstructorDashboard'
 import CourseDetails from "./pages/courseDetails/courseDetails.jsx";
+import LectureOverview from './pages/LectureOverview/LectureOverview'
+
 
 
 
@@ -29,7 +31,8 @@ function App() {
           <Route path="/SetNewPassword" element={<SetNewPassword />} />
           <Route path="/SuccessfulReset" element={<SuccessfulReset />} />
           <Route path="/InstructorDashboard" element={<InstructorDashboard />} />
-        
+          <Route path="/LectureOverview" element={<LectureOverview />} />
+
           
         </Routes>
      

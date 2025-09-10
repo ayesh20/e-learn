@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Poltawski+Nowy:wght@700&display=swap');
+
+.dashboard {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8fafc;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Top Banner */
+.topBanner {
+  width: 90%;
+  height: 200px;
+  overflow: hidden;
+  margin: 30px auto;
+  border-radius: 12px;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Header */
+.coursesHeader {
+  background-color: #fff;
+  padding: 20px 0;
+  border-bottom: 1px solid #e2e8f0;
+  width: 100%;
+}
+
+.headerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.courseBtn,
+.addBtn {
+  font-family: 'Poppins', sans-serif;
+  padding: 10px 20px;
+  background-color: #49BBBD;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.courseBtn:hover,
+.addBtn:hover {
+  background-color: #3aa5a7;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.filterContainer {
+  position: relative;
+}
+
+.filterDropdown {
+  font-family: 'Poppins', sans-serif;
+  padding: 10px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #4a5568;
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 40px;
+  min-width: 150px;
+}
+
+.filterContainer::after {
+  content: '▼';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #718096;
+  pointer-events: none;
+  font-size: 12px;
+}
+
+/* Wrapper for form + upload + preview */
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  align-items: flex-start;
+}
+
+.left {
+  flex: 2;
+}
+
+.middle {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.form input,
+.form textarea,
+.form select {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.uploadBox {
+  border: 2px dashed #aaa;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  width: 200px;
+  height: 150px;
+}
+
+.previewCard {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  width: 220px;
+  text-align: center;
+}
+
+.previewCard img {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}

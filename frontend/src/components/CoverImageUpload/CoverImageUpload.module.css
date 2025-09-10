@@ -1,0 +1,123 @@
+/* CoverImageUpload.module.css */
+.coverImageUpload {
+  width: 100%;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #49BBBD;
+}
+
+.uploadArea {
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.uploadArea:hover {
+  border-color: #49BBBD;
+}
+
+.uploadPlaceholder {
+  color: #718096;
+}
+
+.uploadIcon {
+  font-size: 48px;
+  color: #49BBBD;
+  margin-bottom: 10px;
+  font-weight: 300;
+}
+
+.uploadText {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+  color: #4a5568;
+}
+
+.uploadSubtext {
+  font-size: 14px;
+  margin: 0;
+  color: #a0aec0;
+}
+
+.imagePreview {
+  position: relative;
+}
+
+.previewImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.changeBtn {
+  background: #49BBBD;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.changeBtn:hover {
+  background: #3aa5a7;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadInfo {
+  background: #f7fafc;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #49BBBD;
+}
+
+.infoText {
+  font-size: 13px;
+  color: #718096;
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 16px;
+  }
+  
+  .uploadArea {
+    padding: 20px;
+  }
+  
+  .uploadIcon {
+    font-size: 36px;
+  }
+  
+  .uploadText {
+    font-size: 14px;
+  }
+  
+  .uploadSubtext {
+    font-size: 12px;
+  }
+  
+  .previewImage {
+    height: 150px;
+  }
+}

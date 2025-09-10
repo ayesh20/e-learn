@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+  font-family: "Arial", sans-serif;
+}
+
+.hero {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.hero img {
+  width: 90%;
+  max-width: 1200px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
