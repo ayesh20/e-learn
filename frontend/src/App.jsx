@@ -3,14 +3,23 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login.jsx";
 import Register from "./pages/Signup/Signup.jsx";
 import HomePage from "./pages/Home/HomePage.jsx";
-import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
-import OTPVerification from './pages/OTPVerification/OTPVerification'
-import ResetConfirm from './pages/ResetConfirm/ResetConfirm'
-import SetNewPassword from './pages/SetNewPassword/SetNewPassword'
-import SuccessfulReset from './pages/SuccessfulReset/SuccessfulReset'
-import InstructorDashboard from './pages/InstructorDashboard/InstructorDashboard'
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import OTPVerification from './pages/OTPVerification/OTPVerification';
+import ResetConfirm from './pages/ResetConfirm/ResetConfirm';
+import SetNewPassword from './pages/SetNewPassword/SetNewPassword';
+import SuccessfulReset from './pages/SuccessfulReset/SuccessfulReset';
+import InstructorDashboard from './pages/InstructorDashboard/InstructorDashboard';
 import CourseDetails from "./pages/courseDetails/courseDetails.jsx";
-import LectureOverview from './pages/LectureOverview/LectureOverview'
+import LectureOverview from './pages/LectureOverview/LectureOverview';
+import ProfileEdit from './pages/ProfileEdit/ProfileEdit';
+import Aboutus from "./pages/AboutUs/Aboutus";
+import Contactus from "./pages/ContactUs/Contactus";
+import MessagingInstructor1 from "./pages/MessagingInstructor/MessagingInstructor1";
+import MessagingInstructor2 from "./pages/MessagingInstructor/MessagingInstructor2";
+import MessagingStudent1 from "./pages/MessagingStudent/MessagingStudent1";
+import MessagingStudent2 from "./pages/MessagingStudent/MessagingStudent2";
+import CourseOverview from "./pages/CourseOverview/CourseOverview";
+
 
 
 
@@ -32,6 +41,15 @@ function App() {
           <Route path="/SuccessfulReset" element={<SuccessfulReset />} />
           <Route path="/InstructorDashboard" element={<InstructorDashboard />} />
           <Route path="/LectureOverview" element={<LectureOverview />} />
+
+         <Route path="/profileedit"  element={<ProfileEdit/>}/>
+         <Route path="/aboutus"  element={<Aboutus/>}/>
+         <Route path="/contactus"  element={<Contactus/>}/>
+         <Route path="/messaginginstructor1"  element={<MessagingInstructor1/>}/>
+         <Route path="/messaginginstructor2"  element={<MessagingInstructor2/>}/>
+         <Route path="/messagingstudent1"  element={<MessagingStudent1/>}/>
+         <Route path="/messagingstudent2"  element={<MessagingStudent2/>}/>
+         <Route path="/courseoverview"  element={<CourseOverview/>}/>
 
           
         </Routes>
