@@ -1,0 +1,189 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.contactPage {
+  width: 100%;
+  max-width: 1200px;   
+  margin: 0 auto;      
+  padding: 40px 20px;  
+  font-family: Arial, sans-serif;
+  color: #222;
+  box-sizing: border-box;
+}
+
+.topSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.contactInfo {
+  flex: 1;
+}
+
+.contactInfo h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.contactInfo p {
+  margin-bottom: 20px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.infoBox {
+  display: flex;
+  align-items: center;
+  background: #f7f7f7;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.icon {
+  font-size: 22px;
+  margin-right: 10px;
+}
+
+.mapBox {
+  flex: 1;
+}
+
+.mapImage {
+  width: 100%;
+  height: 280px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.formSection {
+  margin-top: 40px;
+}
+
+.formSection h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.formSection p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.row {
+  display: flex;
+  gap: 15px;
+}
+
+.row input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sendBtn {
+  background: orange;
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 120px;
+  transition: 0.3s;
+}
+
+.sendBtn:hover {
+  background: darkorange;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .topSection {
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .contactInfo h2 {
+    font-size: 20px;
+  }
+
+  .contactInfo p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .mapImage {
+    height: 220px;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .row input {
+    width: 100%;
+  }
+
+  .formSection h3 {
+    font-size: 18px;
+  }
+
+  .sendBtn {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactPage {
+    padding: 20px;
+  }
+
+  .contactInfo h2 {
+    font-size: 18px;
+  }
+
+  .contactInfo p,
+  .formSection p {
+    font-size: 14px;
+  }
+
+  .mapImage {
+    height: 180px;
+  }
+
+  .sendBtn {
+    font-size: 14px;
+    padding: 12px;
+  }
+}

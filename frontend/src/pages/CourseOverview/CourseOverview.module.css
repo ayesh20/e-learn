@@ -1,0 +1,459 @@
+
+
+.courseOverviewPage {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f8f8;
+  color: #333;
+  padding-bottom: 50px;
+  width: 100%;
+}
+
+.headerSection {
+  background-color: #000;
+  color: #fff;
+  padding: 40px 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.headerContent {
+  flex: 3;
+}
+
+.tags {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.tag {
+  background-color: #666;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.85em;
+  margin-right: 10px;
+}
+
+.author {
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+.headerContent h1 {
+  font-size: 2.5em;
+  line-height: 1.2;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.metaInfo {
+  display: flex;
+  gap: 25px;
+  font-size: 0.9em;
+  color: #ddd;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metaItem i {
+  color: #f7a53c; /* Orange color for icons */
+}
+
+/* Promo Card (Right Side) */
+.promoCard {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.promoImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.promoTitle {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.promoPricing {
+  margin-bottom: 20px;
+}
+
+.oldPrice {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 1em;
+  margin-right: 10px;
+}
+
+.newPrice {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #f7a53c; /* Orange */
+}
+
+.startNowButton {
+  background-color: #f7a53c; /* Orange */
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.startNowButton:hover {
+  background-color: #e0922f;
+}
+
+/* Main Content Area */
+.mainContent {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px; /* Overlap with header */
+  padding: 0 80px; /* Match header padding */
+}
+
+.leftColumn {
+  flex: 3;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  z-index: 1; /* Ensure it's above other elements if needed */
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 25px;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  padding: 15px 25px;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #777;
+  cursor: pointer;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+  margin-right: 10px;
+}
+
+.tabButton.active {
+  color: #f7a53c; /* Orange */
+  border-bottom: 3px solid #f7a53c;
+}
+
+.overviewContent p {
+  line-height: 1.7;
+  color: #555;
+}
+
+/* Curriculum Section */
+.curriculumContent {
+  margin-top: 20px;
+}
+
+.curriculumSection {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  overflow: hidden; /* For collapsible effect */
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #fdfdfd;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  gap: 10px;
+}
+
+.sectionHeader i:first-child {
+  color: #f7a53c; /* Orange */
+}
+
+.sectionHeader h4 {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.sectionMeta {
+  font-size: 0.9em;
+  color: #888;
+  margin-left: 15px;
+}
+
+.subLessons {
+  padding: 10px 20px;
+  background-color: #fff;
+}
+
+.subLessonItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.subLessonItem:last-child {
+  border-bottom: none;
+}
+
+.subLessonItem i:first-child {
+  color: #f7a53c; /* Orange */
+  margin-right: 15px;
+}
+
+.subLessonItem span:first-of-type {
+  flex-grow: 1;
+  color: #555;
+}
+
+.subLessonActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.previewButton {
+  background-color: #e0f7fa; /* Light blue */
+  color: #00bcd4; /* Cyan */
+  border: none;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.previewButton:hover {
+  background-color: #b2ebf2;
+}
+
+.subLessonActions .fa-lock {
+  color: #ccc; /* Grey for locked */
+  font-size: 0.9em;
+  margin-right: 5px;
+}
+
+.subLessonActions .fa-check {
+  color: #4CAF50; /* Green for checked */
+  font-size: 0.9em;
+  margin-left: 5px;
+}
+
+
+/* Comment Section */
+.commentSection {
+  margin-top: 50px;
+  border-top: 1px solid #eee;
+  padding-top: 40px;
+}
+
+.commentSection h3 {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+}
+
+.commentSection p {
+  color: #777;
+  margin-bottom: 25px;
+  font-size: 0.95em;
+}
+
+.commentForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.formRow {
+  display: flex;
+  gap: 15px;
+}
+
+.formRow input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1em;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.postCommentButton {
+  background-color: #f7a53c; /* Orange */
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-size: 1.05em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-start; /* Aligns button to the left */
+}
+
+.postCommentButton:hover {
+  background-color: #e0922f;
+}
+
+
+/* Tablets (≤1024px) */
+@media (max-width: 1024px) {
+  .headerSection {
+    padding: 30px 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .headerContent h1 {
+    font-size: 2em;
+  }
+
+  .metaInfo {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .mainContent {
+    flex-direction: column;
+    padding: 0 40px;
+  }
+
+  .leftColumn {
+    padding: 20px;
+  }
+}
+
+/* Mobile (≤768px) */
+@media (max-width: 768px) {
+  .headerSection {
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .headerContent h1 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+  }
+
+  .tags {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .promoCard {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 20px;
+  }
+
+  .mainContent {
+    margin-top: 40px;
+    padding: 0 20px;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+  }
+
+  .tabButton {
+    font-size: 1em;
+    padding: 10px 15px;
+  }
+
+  .commentSection h3 {
+    font-size: 1.4em;
+  }
+}
+
+/* Small Mobile (≤480px) */
+@media (max-width: 480px) {
+  .headerSection {
+    padding: 15px;
+  }
+
+  .headerContent h1 {
+    font-size: 1.5em;
+  }
+
+  .metaInfo {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .promoCard {
+    padding: 15px;
+  }
+
+  .startNowButton {
+    font-size: 1em;
+    padding: 10px 20px;
+  }
+
+  .leftColumn {
+    padding: 15px;
+  }
+
+  .tabButton {
+    font-size: 0.95em;
+    padding: 8px 12px;
+  }
+
+  .commentForm {
+    gap: 10px;
+  }
+
+  .formRow {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .postCommentButton {
+    width: 100%;
+    text-align: center;
+  }
+}

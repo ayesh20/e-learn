@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.courseList {
+  font-family: Arial, sans-serif;
+  width: 600px;
+  margin: 20px auto;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* Search */
+.searchBox {
+  display: flex;
+  align-items: center;
+  background: #e6f7f7;
+  border-radius: 20px;
+  padding: 8px 12px;
+  width: 220px;
+}
+
+.searchBox input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+}
+
+.searchIcon {
+  color: #333;
+}
+
+/* Dropdown */
+.dropdownBtn {
+  background: #42c5c5;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* List Items */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.name {
+  flex: 1;
+  font-weight: bold;
+}
+
+/* Buttons */
+.courseBtn {
+  background: #42c5c5;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.startBtn {
+  background: #a8f28f;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+/* Tablets (≤1024px) */
+@media (max-width: 1024px) {
+  .courseList {
+    width: 90%;
+    margin: 20px auto;
+  }
+
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .searchBox {
+    width: 100%;
+  }
+
+  .dropdownBtn {
+    width: 100%;
+  }
+}
+
+/* Mobile (≤768px) */
+@media (max-width: 768px) {
+  .listItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+  }
+
+  .name {
+    font-size: 15px;
+  }
+
+  .courseBtn,
+  .startBtn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Small Mobile (≤480px) */
+@media (max-width: 480px) {
+  .courseList {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .searchBox {
+    padding: 6px 10px;
+  }
+
+  .dropdownBtn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .courseBtn,
+  .startBtn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
