@@ -85,8 +85,8 @@ const MyCourses = () => {
         {/* ---------------- Section 2 ---------------- */}
         <div className="section_2">
           <div className="section2-header">
-            <h3>Recommended for you</h3>
-            <button>See All</button>
+            <h2>Recommended For You</h2>
+            <span>See All</span>
           </div>
 
           <div className="cardsection">
@@ -184,12 +184,12 @@ const MyCourses = () => {
         <div className="section_3">
           <div className="section3-content">
             <div className="section3-text">
-              <h2>Learn from anywhere, anytime</h2>
-              <p>Access courses online and gain new skills at your own pace.</p>
-              <button>Explore Courses</button>
+              <h2>Enhance Your Learning Journey</h2>
+              <p>Join our community of learners and access a wide range of courses designed to help you achieve your goals.</p>
+              <button>Get Started</button>
             </div>
             <div className="section3-image">
-              <img src="/images/remote_learning.png" alt="Remote Learning" />
+              <img src="/images/elearning.png" alt="E-Learning Illustration" />
             </div>
           </div>
         </div>

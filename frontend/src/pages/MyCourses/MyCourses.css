@@ -138,17 +138,15 @@ header h2 {
   margin-bottom: 20px;
 }
 
-.section2-header h3 {
-  font-size: 20px;
+.section2-header h2 {
+  font-size: 24px;
   font-weight: bold;
   color: #222;
 }
 
-.section2-header button {
-  background: transparent;
-  border: none;
-  color: #00c4a7;
+.section2-header span {
   font-size: 14px;
+  color: #00c4a7;
   cursor: pointer;
 }
 
@@ -156,18 +154,17 @@ header h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: flex-start;
 }
 
 .section_2 .card {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
   flex: 0 0 calc(25% - 15px);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .section_2 .card:hover {
@@ -248,20 +245,21 @@ header h2 {
 
 /* ---------------- Section 3 ---------------- */
 .section_3 {
-  background-color: #f0f8ff;
+  background: linear-gradient(135deg, #a3cfff, #e0f7fa);
   padding: 60px 10%;
 }
 
 .section3-content {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 30px;
+  flex-wrap: wrap;
 }
 
 .section3-text {
   flex: 1 1 400px;
+  text-align: center;
 }
 
 .section3-text h2 {
@@ -280,12 +278,12 @@ header h2 {
 .section3-text button {
   padding: 12px 28px;
   background-color: #00c4a7;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  transition: background 0.3s;
+  transition: background-color 0.3s ease;
 }
 
 .section3-text button:hover {
@@ -327,6 +325,14 @@ header h2 {
     margin-bottom: 20px;
   }
 
+  .section3-content {
+    flex-direction: column;
+  }
+
+  .section3-image img {
+    max-width: 100%;
+  }
+
   header {
     flex-direction: column;
     align-items: center;
@@ -342,14 +348,5 @@ header h2 {
   .dropdown select {
     width: auto;
     min-width: 150px;
-  }
-
-  .section3-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .section3-image img {
-    max-width: 300px;
   }
 }
