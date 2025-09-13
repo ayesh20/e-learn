@@ -19,6 +19,7 @@ import MessagingInstructor2 from "./pages/MessagingInstructor/MessagingInstructo
 import MessagingStudent1 from "./pages/MessagingStudent/MessagingStudent1";
 import MessagingStudent2 from "./pages/MessagingStudent/MessagingStudent2";
 import CourseOverview from "./pages/CourseOverview/CourseOverview";
+import AdminLayout from "./pages/admin/adminpage.jsx";
 
 
 
@@ -50,6 +51,7 @@ function App() {
          <Route path="/messagingstudent1"  element={<MessagingStudent1/>}/>
          <Route path="/messagingstudent2"  element={<MessagingStudent2/>}/>
          <Route path="/courseoverview"  element={<CourseOverview/>}/>
+          <Route path="/admin/*" element={<AdminLayout/>}/>
 
           
         </Routes>
