@@ -5,6 +5,7 @@ import styles from './Signup.module.css';
 export default function Register() {
     const [email, setEmail] = useState('');
     const [fullName, setFullName] = useState('');
+    const [phoneno, setPhoneno] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +17,8 @@ export default function Register() {
         e.preventDefault();
         console.log('Register submitted:', { 
             email, 
-            fullName, 
+            fullName,
+            phoneno, 
             password, 
             confirmPassword, 
             userType 
@@ -102,6 +104,17 @@ export default function Register() {
                                 placeholder="Enter your User name"
                                 value={fullName}
                                 onChange={(e) => setFullName(e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="phoneno" className={styles.label}>Phone Number</label>
+                            <input 
+                                type="text" 
+                                id="phoneno" 
+                                className={styles.input}
+                                placeholder="Enter your Phone Number"
+                                value={phoneno}
+                                onChange={(e) => setPhoneno(e.target.value)}
                             />
                         </div>
                         
