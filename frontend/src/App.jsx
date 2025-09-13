@@ -19,6 +19,8 @@ import MessagingInstructor2 from "./pages/MessagingInstructor/MessagingInstructo
 import MessagingStudent1 from "./pages/MessagingStudent/MessagingStudent1";
 import MessagingStudent2 from "./pages/MessagingStudent/MessagingStudent2";
 import CourseOverview from "./pages/CourseOverview/CourseOverview";
+import Courses from "./pages/Courses/Courses";
+import MyCourses from "./pages/MyCourses/MyCourses";
 
 
 
@@ -50,6 +52,11 @@ function App() {
          <Route path="/messagingstudent1"  element={<MessagingStudent1/>}/>
          <Route path="/messagingstudent2"  element={<MessagingStudent2/>}/>
          <Route path="/courseoverview"  element={<CourseOverview/>}/>
+         <Route path="/courses" element={<Courses />} />
+         <Route path="/mycourses" element={<MyCourses />} />
+
+
+
 
           
         </Routes>
