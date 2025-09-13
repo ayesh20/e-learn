@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
-
 import React, { useState } from 'react';
 import styles from './CourseOverview.module.css'; // Using CSS Modules
 
