@@ -1,0 +1,195 @@
+.quizResultsPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+}
+
+.container {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.mainContent {
+  display: flex;
+  padding: 60px 0;
+  gap: 80px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Question Grid Styles */
+.questionGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 400px;
+}
+
+.questionNumber {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+}
+
+.questionCorrect {
+  background: linear-gradient(135deg, #84cc16, #65a30d);
+}
+
+.questionIncorrect {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.questionDefault {
+  background: linear-gradient(135deg, #84cc16, #65a30d);
+}
+
+.questionNumber:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Results Section Styles */
+.resultsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding-top: 20px;
+}
+
+.marksContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.marksTitle {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.percentageCard {
+  width: 200px;
+  height: 120px;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3);
+}
+
+.percentageText {
+  font-size: 42px;
+  font-weight: bold;
+  color: white;
+}
+
+.exitButton {
+  background: linear-gradient(135deg, #374151, #1f2937);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 15px 40px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(31, 41, 55, 0.3);
+}
+
+.exitButton:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mainContent {
+    flex-direction: column;
+    gap: 40px;
+    padding: 40px 0;
+    align-items: center;
+  }
+
+  .questionGrid {
+    width: 100%;
+    max-width: 350px;
+    gap: 15px;
+  }
+
+  .questionNumber {
+    width: 70px;
+    height: 70px;
+    font-size: 22px;
+  }
+
+  .marksTitle {
+    font-size: 36px;
+  }
+
+  .percentageCard {
+    width: 160px;
+    height: 100px;
+  }
+
+  .percentageText {
+    font-size: 32px;
+  }
+
+  .exitButton {
+    padding: 12px 30px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .questionGrid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 280px;
+    gap: 12px;
+  }
+
+  .questionNumber {
+    width: 60px;
+    height: 60px;
+    font-size: 18px;
+    border-radius: 15px;
+  }
+
+  .marksTitle {
+    font-size: 28px;
+  }
+
+  .percentageCard {
+    width: 140px;
+    height: 80px;
+  }
+
+  .percentageText {
+    font-size: 24px;
+  }
+
+  .exitButton {
+    padding: 10px 25px;
+    font-size: 16px;
+  }
+}

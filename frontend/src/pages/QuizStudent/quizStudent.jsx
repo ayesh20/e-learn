@@ -1,15 +1,30 @@
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../../components/Navbar/Navbar.jsx';
-import Footer from '../../components/Footer/Footer.jsx';
 import React, { useState } from 'react';
-import styles from './QuizStudent.modules.css'; 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import styles from './Quiz1Student.module.css';
+import Footer from '../../components/Footer/Footer.jsx';
+import Navbar from '../../components/Navbar/Navbar.jsx';
 
 const QuizStudent = () => {
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(1);
   const [currentQuestion, setCurrentQuestion] = useState(7);
 
-  const handleAnswerSelect = (answerIndex) => {
-    setSelectedAnswer(answerIndex);
+  const questions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  
+  const answers = [
+    { id: 1, text: 'Amazon S3' },
+    { id: 2, text: 'Amazon S3' },
+    { id: 3, text: 'Amazon S3' },
+    { id: 4, text: 'Amazon S3' }
+  ];
+
+  const getQuestionClassName = (questionNum) => {
+    if (questionNum < currentQuestion) return `${styles.questionNumber} ${styles.questionCompleted}`;
+    if (questionNum === currentQuestion) return `${styles.questionNumber} ${styles.questionCurrent}`;
+    return `${styles.questionNumber} ${styles.questionUpcoming}`;
+  };
+
+  const handleAnswerSelect = (answerId) => {
+    setSelectedAnswer(answerId);
   };
 
   const handlePrevious = () => {
@@ -20,8 +35,10 @@ const QuizStudent = () => {
   };
 
   const handleNext = () => {
-    setCurrentQuestion(currentQuestion + 1);
-    setSelectedAnswer(null);
+    if (currentQuestion < 20) {
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedAnswer(null);
+    }
   };
 
   const handleReset = () => {
@@ -29,149 +46,105 @@ const QuizStudent = () => {
   };
 
   const handleSave = () => {
-    // Save logic here
     console.log('Answer saved:', selectedAnswer);
   };
 
+  const handleQuestionClick = (questionNum) => {
+    setCurrentQuestion(questionNum);
+    setSelectedAnswer(null);
+  };
+
   return (
-    <>
+    <div className={styles.quizStudentPage}>
       <Navbar />
-      <div className={styles.quizStudentPage}>
-        {/* Header Section */}
-        <div className={styles.headerSection}>
-          <div className={styles.headerContent}>
-            <div className={styles.tags}>
-              <span className={styles.tag}>Photography</span>
-              <span className={styles.author}>by DeterminedPoitras</span>
+      
+      <div className={styles.mainContent}>
+        {/* Question Grid Section */}
+        <div className={styles.questionGrid}>
+          {questions.map(questionNum => (
+            <div
+              key={questionNum}
+              className={getQuestionClassName(questionNum)}
+              onClick={() => handleQuestionClick(questionNum)}
+            >
+              {questionNum}
             </div>
-            <h1>The Ultimate Guide To The Best WordPress LMS Plugin</h1>
-            <div className={styles.metaInfo}>
-              <div className={styles.metaItem}>
-                <i className="fas fa-calendar-alt"></i>
-                <span>2 Weeks</span>
-              </div>
-              <div className={styles.metaItem}>
-                <i className="fas fa-users"></i>
-                <span>156 Students</span>
-              </div>
-              <div className={styles.metaItem}>
-                <i className="fas fa-signal"></i>
-                <span>All levels</span>
-              </div>
-              <div className={styles.metaItem}>
-                <i className="fas fa-question-circle"></i>
-                <span>3 Quizzes</span>
-              </div>
-            </div>
-          </div>
-          <div className={styles.promoCard}>
-            <img src="https://picsum.photos/250/150" alt="Promo" className={styles.promoImage} />
-            <p className={styles.promoTitle}>Create an LMS website</p>
-            <div className={styles.promoPricing}>
-              <span className={styles.oldPrice}>$59.0</span>
-              <span className={styles.newPrice}>$49.0</span>
-            </div>
-            <button className={styles.startNowButton}>Start Now</button>
-          </div>
+          ))}
+          
+          <button className={styles.finishedButton}>
+            Finished
+          </button>
         </div>
 
-        {/* Main Quiz Content Area */}
-        <div className={styles.mainContent}>
-          <div className={styles.quizContainer}>
-            {/* Question Section */}
-            <div className={styles.questionSection}>
-              <div className={styles.questionHeader}>
-                <span className={styles.questionLabel}>Question</span>
-                <span className={styles.questionNumber}>{currentQuestion}</span>
-              </div>
-              
-              <div className={styles.questionContent}>
-                <h2>Which AWS service is used to launch and manage virtual servers in the cloud?</h2>
-              </div>
+        {/* Quiz Content Section */}
+        <div className={styles.quizContent}>
+          <div className={styles.questionHeader}>
+            <span className={styles.questionLabel}>Question</span>
+            <span className={styles.questionNumberDisplay}>{currentQuestion}</span>
+          </div>
+          
+          <div className={styles.questionContent}>
+            <h2>Which AWS service is used to launch and manage virtual servers in the cloud?</h2>
+          </div>
 
-              <div className={styles.answersSection}>
-                <h3>Answers</h3>
-                
-                <div className={styles.answerOptions}>
-                  <label className={styles.answerOption}>
-                    <input 
-                      type="radio" 
-                      name="answer" 
-                      value="1"
-                      checked={selectedAnswer === 1}
-                      onChange={() => handleAnswerSelect(1)}
-                    />
-                    <span className={styles.answerNumber}>1</span>
-                    <span className={styles.answerText}>Amazon S3</span>
-                  </label>
-
-                  <label className={styles.answerOption}>
-                    <input 
-                      type="radio" 
-                      name="answer" 
-                      value="2"
-                      checked={selectedAnswer === 2}
-                      onChange={() => handleAnswerSelect(2)}
-                    />
-                    <span className={styles.answerNumber}>2</span>
-                    <span className={styles.answerText}>Amazon S3</span>
-                  </label>
-
-                  <label className={styles.answerOption}>
-                    <input 
-                      type="radio" 
-                      name="answer" 
-                      value="3"
-                      checked={selectedAnswer === 3}
-                      onChange={() => handleAnswerSelect(3)}
-                    />
-                    <span className={styles.answerNumber}>3</span>
-                    <span className={styles.answerText}>Amazon S3</span>
-                  </label>
-
-                  <label className={styles.answerOption}>
-                    <input 
-                      type="radio" 
-                      name="answer" 
-                      value="4"
-                      checked={selectedAnswer === 4}
-                      onChange={() => handleAnswerSelect(4)}
-                    />
-                    <span className={styles.answerNumber}>4</span>
-                    <span className={styles.answerText}>Amazon S3</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Navigation and Action Buttons */}
-              <div className={styles.quizNavigation}>
-                <button 
-                  className={styles.previousButton}
-                  onClick={handlePrevious}
-                  disabled={currentQuestion === 1}
+          <div className={styles.answersSection}>
+            <h3 className={styles.sectionTitle}>Answers</h3>
+            
+            <div className={styles.answerOptions}>
+              {answers.map(answer => (
+                <label 
+                  key={answer.id}
+                  className={`${styles.answerOption} ${
+                    selectedAnswer === answer.id ? styles.answerSelected : ''
+                  }`}
                 >
-                  &lt; Previous
-                </button>
-                
-                <div className={styles.actionButtons}>
-                  <button className={styles.resetButton} onClick={handleReset}>
-                    Reset
-                  </button>
-                  <button className={styles.saveButton} onClick={handleSave}>
-                    Save
-                  </button>
-                </div>
-
-                <button className={styles.nextButton} onClick={handleNext}>
-                  Next &gt;
-                </button>
-              </div>
+                  <input 
+                    type="radio" 
+                    name="answer" 
+                    value={answer.id}
+                    checked={selectedAnswer === answer.id}
+                    onChange={() => handleAnswerSelect(answer.id)}
+                  />
+                  <span className={styles.answerNumber}>{answer.id}</span>
+                  <span className={styles.answerText}>{answer.text}</span>
+                </label>
+              ))}
             </div>
+          </div>
+
+          <div className={styles.quizNavigation}>
+            <button 
+              className={styles.previousButton}
+              onClick={handlePrevious}
+              disabled={currentQuestion === 1}
+            >
+              <ChevronLeft size={16} />
+              Previous
+            </button>
+            
+            <div className={styles.actionButtons}>
+              <button className={styles.resetButton} onClick={handleReset}>
+                Reset
+              </button>
+              <button className={styles.saveButton} onClick={handleSave}>
+                Save
+              </button>
+            </div>
+
+            <button 
+              className={styles.nextButton} 
+              onClick={handleNext}
+              disabled={currentQuestion === 20}
+            >
+              Next
+              <ChevronRight size={16} />
+            </button>
           </div>
         </div>
       </div>
+      
       <Footer />
-    </>
+    </div>
   );
 };
 

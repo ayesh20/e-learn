@@ -21,6 +21,7 @@ import MessagingStudent2 from "./pages/MessagingStudent/MessagingStudent2";
 import CourseOverview from "./pages/CourseOverview/CourseOverview";
 import AdminLayout from "./pages/admin/adminpage.jsx";
 import QuizStudent from "./pages/QuizStudent/quizStudent.jsx";
+import QuizInstructor from "./pages/quizInstructor/quizInstructor.jsx";
 
 
 
@@ -54,6 +55,7 @@ function App() {
          <Route path="/courseoverview"  element={<CourseOverview/>}/>
           <Route path="/admin/*" element={<AdminLayout/>}/>
           <Route path="/quizstudent" element={<QuizStudent/>}/>
+          <Route path="/quizinstructor" element={<QuizInstructor/>}/>
 
           
         </Routes>
