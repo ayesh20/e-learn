@@ -1,18 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
 import styles from './Home.module.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function HomePage() {
+    const navigate = useNavigate();
+
     const statsData = [
         { number: '15K+', label: 'Students' },
         { number: '75%', label: 'Total success' },
         { number: '35', label: 'Main questions' },
         { number: '26', label: 'Lectures' }
     ];
-
- 
 
     return (
         <div className={styles.homePage}>
@@ -28,18 +29,16 @@ export default function HomePage() {
                         </h1>
                         <p className={styles.heroSubtitle}>
                             TOTC is an interesting platform that will teach<br />
-                            you in more an interactive way
+                            you in a more interactive way
                         </p>
-                        <button className={styles.joinBtn}>Join for free</button>
+                        <button className={styles.joinBtn} onClick={() => navigate("/register")}>Join for free</button>
                     </div>
                     <div className={styles.heroImage}>
                         <img 
                             src="/heroimg.png" 
                             alt="Student with books"
                             className={styles.studentImage}
-                            
                         />
-                        
                     </div>
                 </div>
                 <div className={styles.waveBottom}></div>
@@ -77,31 +76,29 @@ export default function HomePage() {
                     </p>
                     
                     <div className={styles.featuresGrid}>
-                        
-                            <div  className={styles.featureCard}>
-                                <div className={styles.featureIcon}>
-                                    <i className='fas fa-file-alt'></i>
-                                </div>
-                                <h3 className={styles.featureTitle}>Well Prepared lecture readings, Downloads & Assignments</h3>
-                                <p className={styles.featureDescription}>Well-prepared lectures with detailed readings, reference, first reading assignments help students with clear, structured, and accessible learning resources.</p>
+                        <div className={styles.featureCard}>
+                            <div className={styles.featureIcon}>
+                                <i className='fas fa-file-alt'></i>
                             </div>
+                            <h3 className={styles.featureTitle}>Well Prepared lecture readings, Downloads & Assignments</h3>
+                            <p className={styles.featureDescription}>Well-prepared lectures with detailed readings, reference, first reading assignments help students with clear, structured, and accessible learning resources.</p>
+                        </div>
 
-                            <div  className={styles.featureCard}>
-                                <div className={styles.featureIcon1}>
-                                    <i className='fas fa-calendar-alt'></i>
-                                </div>
-                                <h3 className={styles.featureTitle}>Easy Scheduling & Conducting Courses</h3>
-                                <p className={styles.featureDescription}>Easy scheduling and conducting of courses allows instructors to plan lessons without restriction, ensuring a smooth learning experience for students.</p>
+                        <div className={styles.featureCard}>
+                            <div className={styles.featureIcon1}>
+                                <i className='fas fa-calendar-alt'></i>
                             </div>
+                            <h3 className={styles.featureTitle}>Easy Scheduling & Conducting Courses</h3>
+                            <p className={styles.featureDescription}>Easy scheduling and conducting of courses allows instructors to plan lessons without restriction, ensuring a smooth learning experience for students.</p>
+                        </div>
 
-                            <div  className={styles.featureCard}>
-                                <div className={styles.featureIcon2}>
-                                    <i className='fas fa-users'></i>
-                                </div>
-                                <h3 className={styles.featureTitle}>User Tracking</h3>
-                                <p className={styles.featureDescription}>User tracking enables instructors of student activities and progress, helping improve student learning performance and engagement for better support and improvement.</p>
+                        <div className={styles.featureCard}>
+                            <div className={styles.featureIcon2}>
+                                <i className='fas fa-users'></i>
                             </div>
-                       
+                            <h3 className={styles.featureTitle}>User Tracking</h3>
+                            <p className={styles.featureDescription}>User tracking enables instructors of student activities and progress, helping improve student learning performance and engagement for better support and improvement.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -122,26 +119,34 @@ export default function HomePage() {
                         <div className={styles.totcCard}>
                             <div className={styles.cardOverlay}>
                                 <h3 className={styles.cardTitle}>FOR INSTRUCTORS</h3>
-                                <button className={styles.cardBtn}>Access to course</button>
+                                <button 
+                                    className={styles.cardBtn} 
+                                    onClick={() => navigate("/InstructorDashboard")}
+                                >
+                                    Access to course
+                                </button>
                             </div>
                             <img 
                                 src="/instructor.png" 
                                 alt="For Instructors"
                                 className={styles.cardImage}
-                                
                             />
                         </div>
                         
                         <div className={styles.totcCard}>
                             <div className={styles.cardOverlay}>
                                 <h3 className={styles.cardTitle}>FOR STUDENTS</h3>
-                                <button className={styles.cardBtn}>Access to course</button>
+                                <button 
+                                    className={styles.cardBtn} 
+                                    onClick={() => navigate("/courses")}
+                                >
+                                    Access to course
+                                </button>
                             </div>
                             <img 
                                 src="/student.png" 
                                 alt="For Students"
                                 className={styles.cardImage}
-                               
                             />
                         </div>
                     </div>
@@ -172,7 +177,6 @@ export default function HomePage() {
                                 src="/testimonial.png" 
                                 alt="Happy student"
                                 className={styles.happyStudent}
-                               
                             />
                         </div>
                     </div>

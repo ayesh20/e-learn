@@ -22,6 +22,7 @@ import CourseOverview from "./pages/CourseOverview/CourseOverview";
 import AdminLayout from "./pages/admin/adminpage.jsx";
 import QuizStudent from "./pages/QuizStudent/quizStudent.jsx";
 import QuizInstructor from "./pages/quizInstructor/quizInstructor.jsx";
+import Courses from "./pages/Courses/Courses.jsx";
 
 
 
@@ -32,8 +33,8 @@ function App() {
     <BrowserRouter>
    
         <Routes>
-         <Route path="/"  element={<HomePage/>}/>
-          <Route path="/login" element={<Login/>} />
+         <Route path="/"  element={<Login/>}/>
+          <Route path="/Home" element={<HomePage/>} />
           <Route path="/register" element={<Register/>} />
           <Route path="/course-details" element={<CourseDetails/>} />
           
@@ -44,6 +45,10 @@ function App() {
           <Route path="/SuccessfulReset" element={<SuccessfulReset />} />
           <Route path="/InstructorDashboard" element={<InstructorDashboard />} />
           <Route path="/LectureOverview" element={<LectureOverview />} />
+          <Route path="/courses" element={<Courses/>} />
+
+
+
 
          <Route path="/profileedit"  element={<ProfileEdit/>}/>
          <Route path="/aboutus"  element={<Aboutus/>}/>

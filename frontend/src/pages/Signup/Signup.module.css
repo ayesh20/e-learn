@@ -1,63 +1,89 @@
+.pageWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4f9f9;
+    min-height: 100vh;
+    width: 100%;
+    padding: 20px;
+}
+
 .container {
     display: flex;
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    max-width: 1200px;
+    max-width: 1000px;
     width: 100%;
+    height: 95vh;
     min-height: 600px;
-    margin: 20px auto;
+}
+
+.imageSection {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    overflow: hidden;
+    background: #49BBBD;
 }
 
 .loginImage {
-    flex: 1;
-    min-height: 600px;
-    position: relative;
-    padding-left: 50px;
-    padding-top: 100px;
-    border-radius: 20px;
-}
-
-.image {
-    
-    width: 650px;
-    height: 750px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    object-position: center;
-    border-radius: 30px;
 }
 
 .formSection {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;   /* 🔥 Start content from top */
     justify-content: center;
     background: white;
-    padding: 20px;
+    padding: 40px 20px;
+    overflow-y: auto;          /* scroll if form is tall */
 }
 
 .formContainer {
     width: 100%;
     max-width: 400px;
-    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* 🔥 header + form stack from top */
+}
+
+/* Header always visible at top */
+.headerSection {
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 .welcomeTitle {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 30px;
+    font-size: 28px;          /* 🔥 slightly bigger */
+    color: #222;
+    margin-bottom: 10px;
     text-align: center;
-    font-weight: 600;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
 }
 
+.subtitle {
+    color: #666;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+/* Tabs */
 .tabButtons {
     display: flex;
     background: #e8f5f3;
     border-radius: 25px;
     padding: 4px;
-    margin-bottom: 30px;
+    margin-bottom: 27px;
+    width: 100%;
 }
 
 .tabBtn {
@@ -69,11 +95,10 @@
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .tabBtn.active {
-    background: #5cb3a6;
+    background: #49BBBD;
     color: white;
 }
 
@@ -82,65 +107,7 @@
     color: #999;
 }
 
-.userTypeSelection {
-    margin-bottom: 30px;
-}
-
-.userTypeOptions {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-}
-
-.userTypeOption {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border: 2px solid #e0e0e0;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 100px;
-    background: white;
-}
-
-.userTypeOption:hover {
-    border-color: #5cb3a6;
-    transform: translateY(-2px);
-}
-
-.userTypeOption.selected {
-    border-color: #5cb3a6;
-    background: #f8fdfc;
-}
-
-.userTypeIcon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #f5f5f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #666;
-    transition: all 0.3s ease;
-}
-
-.userTypeOption.selected .userTypeIcon {
-    background: #5cb3a6;
-    color: white;
-}
-
-.userTypeLabel {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* Form */
 .form {
     width: 100%;
 }
@@ -151,11 +118,10 @@
 
 .label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: #333;
     font-weight: 500;
     font-size: 14px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .inputContainer {
@@ -164,17 +130,16 @@
 
 .input {
     width: 100%;
-    padding: 15px 20px;
+    padding: 12px 18px;
     border: 2px solid #e0e0e0;
     border-radius: 25px;
     font-size: 14px;
-    transition: all 0.3s ease;
     outline: none;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease;
 }
 
 .input:focus {
-    border-color: #5cb3a6;
+    border-color: #49BBBD;
 }
 
 .input::placeholder {
@@ -183,7 +148,7 @@
 
 .passwordToggle {
     position: absolute;
-    right: 20px;
+    right: 18px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
@@ -191,10 +156,11 @@
     font-size: 16px;
 }
 
-.registerBtn {
+/* Buttons */
+.loginBtn {
     width: 100%;
-    padding: 15px;
-    background: #5cb3a6;
+    padding: 14px;
+    background: #49BBBD;
     color: white;
     border: none;
     border-radius: 25px;
@@ -202,13 +168,19 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-bottom: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-bottom: 18px;
 }
 
-.registerBtn:hover {
-    background: #4a9d91;
+.loginBtn:hover {
+    background: #3ea2a4;
     transform: translateY(-2px);
+}
+
+.divider {
+    text-align: center;
+    margin: 15px 0;
+    color: #999;
+    font-size: 14px;
 }
 
 .googleBtn {
@@ -216,7 +188,6 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 50px;
     padding: 12px;
     border: 2px solid #e0e0e0;
     border-radius: 25px;
@@ -224,52 +195,37 @@
     cursor: pointer;
     transition: all 0.3s ease;
     color: #333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
 }
 
 .googleBtn:hover {
-    border-color: #5cb3a6;
+    border-color: #49BBBD;
 }
 
 .googleIcon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     background: url('https://developers.google.com/identity/images/g-logo.png') center/contain no-repeat;
+    margin-right: 10px;
 }
 
-/* Mobile Responsive */
+/* Responsive */
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
         max-width: 400px;
-        margin: 10px;
+        height: auto;
     }
 
-    .loginImage {
-        min-height: 200px;
+    .imageSection {
+        display: none;
     }
 
-    .formContainer {
-        padding: 30px 20px;
+    .formSection {
+        padding: 30px 15px;
     }
 
     .welcomeTitle {
-        font-size: 20px;
-    }
-
-    .userTypeOptions {
-        gap: 15px;
-    }
-
-    .userTypeOption {
-        min-width: 80px;
-        padding: 15px;
-    }
-
-    .userTypeIcon {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
+        font-size: 22px;
     }
 }

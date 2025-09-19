@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Signup.module.css';
 
 export default function Register() {
@@ -10,157 +10,134 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [activeTab, setActiveTab] = useState('register');
-    const [userType, setUserType] = useState('student');
+
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Register submitted:', { 
-            email, 
-            fullName,
-            phoneno, 
-            password, 
-            confirmPassword, 
-            userType 
-        });
-    };
-
-    const togglePassword = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const toggleConfirmPassword = () => {
-        setShowConfirmPassword(!showConfirmPassword);
+        console.log('Register submitted:', { email, fullName, phoneno, password, confirmPassword });
+        navigate('/home');
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.loginImage}>
-                <img src="/signup.jpg" alt="Register" className={styles.image} />
-            </div>
-            <div className={styles.formSection}>
-                <div className={styles.formContainer}>
-                    <h1 className={styles.welcomeTitle}>Welcome to EduFlex.!</h1>
-                    
-                    <div className={styles.tabButtons}>
-                        <button 
-                            className={`${styles.tabBtn} ${activeTab === 'login' ? styles.active : styles.inactive}`}
-                            onClick={() => setActiveTab('login')}
-                            type="button"
-                        >
-                            Login
-                        </button>
-                        <button 
-                            className={`${styles.tabBtn} ${activeTab === 'register' ? styles.active : styles.inactive}`}
-                            onClick={() => setActiveTab('register')}
-                            type="button"
-                        >
-                            Register
-                        </button>
-                    </div>
-                    
-                    <div className={styles.userTypeSelection}>
-                        <div className={styles.userTypeOptions}>
-                            <div 
-                                className={`${styles.userTypeOption} ${userType === 'student' ? styles.selected : ''}`}
-                                onClick={() => setUserType('student')}
-                            >
-                                <div className={styles.userTypeIcon}>
-                                    <i className="fas fa-user-graduate"></i>
-                                </div>
-                                <span className={styles.userTypeLabel}>Student</span>
-                            </div>
-                            <div 
-                                className={`${styles.userTypeOption} ${userType === 'instructor' ? styles.selected : ''}`}
-                                onClick={() => setUserType('instructor')}
-                            >
-                                <div className={styles.userTypeIcon}>
-                                    <i className="fas fa-chalkboard-teacher"></i>
-                                </div>
-                                <span className={styles.userTypeLabel}>Instructor</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <form onSubmit={handleSubmit} className={styles.form}>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="email" className={styles.label}>Email Address</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                className={styles.input}
-                                placeholder="Enter your Email Address"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
+        <div className={styles.pageWrapper}>
+            <div className={styles.container}>
+                {/* Left Image */}
+                <div className={styles.imageSection}>
+                    <img src="/signup.jpg" alt="Register" className={styles.loginImage}/>
+                </div>
 
-                        <div className={styles.formGroup}>
-                            <label htmlFor="fullName" className={styles.label}>Full name</label>
-                            <input 
-                                type="text" 
-                                id="fullName" 
-                                className={styles.input}
-                                placeholder="Enter your User name"
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="phoneno" className={styles.label}>Phone Number</label>
-                            <input 
-                                type="text" 
-                                id="phoneno" 
-                                className={styles.input}
-                                placeholder="Enter your Phone Number"
-                                value={phoneno}
-                                onChange={(e) => setPhoneno(e.target.value)}
-                            />
-                        </div>
+                {/* Right Form */}
+                <div className={styles.formSection}>
+                    <div className={styles.formContainer}>
                         
-                        <div className={styles.formGroup}>
-                            <label htmlFor="password" className={styles.label}>Password</label>
-                            <div className={styles.inputContainer}>
-                                <input 
-                                    type={showPassword ? "text" : "password"}
-                                    id="password" 
-                                    className={styles.input}
-                                    placeholder="Enter your Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                                <i 
-                                    className={`${styles.passwordToggle} fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}
-                                    onClick={togglePassword}
-                                ></i>
+                        {/* 🔥 Header Section (always at top) */}
+                        <div className={styles.headerSection}>
+                            <h1 className={styles.welcomeTitle}>Welcome to EduFlex!</h1>
+                            <p className={styles.subtitle}>Log in to continue your learning journey</p>
+
+                            {/* Tabs */}
+                            <div className={styles.tabButtons}>
+                                <button 
+                                    className={`${styles.tabBtn} ${styles.inactive}`}
+                                    type="button"
+                                    onClick={() => navigate('/')}
+                                >
+                                    Login
+                                </button>
+                                <button 
+                                    className={`${styles.tabBtn} ${styles.active}`}
+                                    type="button"
+                                >
+                                    Register
+                                </button>
                             </div>
                         </div>
 
-                        <div className={styles.formGroup}>
-                            <label htmlFor="confirmPassword" className={styles.label}>Confirm password</label>
-                            <div className={styles.inputContainer}>
-                                <input 
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    id="confirmPassword" 
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className={styles.form}>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="email" className={styles.label}>Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
                                     className={styles.input}
-                                    placeholder="Enter your Password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
-                                <i 
-                                    className={`${styles.passwordToggle} fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}
-                                    onClick={toggleConfirmPassword}
-                                ></i>
                             </div>
-                        </div>
-                        
-                        <button type="submit" className={styles.registerBtn}>Register</button>
-                        
-                        <button type="button" className={styles.googleBtn}>
-                            <div className={styles.googleIcon}></div>
-                            Continue with Google
-                        </button>
-                    </form>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="fullName" className={styles.label}>Full Name</label>
+                                <input
+                                    type="text"
+                                    id="fullName"
+                                    className={styles.input}
+                                    placeholder="Enter your full name"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="phoneno" className={styles.label}>Phone Number</label>
+                                <input
+                                    type="text"
+                                    id="phoneno"
+                                    className={styles.input}
+                                    placeholder="Enter your phone number"
+                                    value={phoneno}
+                                    onChange={(e) => setPhoneno(e.target.value)}
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="password" className={styles.label}>Password</label>
+                                <div className={styles.inputContainer}>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id="password"
+                                        className={styles.input}
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <i
+                                        className={`${styles.passwordToggle} fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    ></i>
+                                </div>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label htmlFor="confirmPassword" className={styles.label}>Confirm Password</label>
+                                <div className={styles.inputContainer}>
+                                    <input
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        id="confirmPassword"
+                                        className={styles.input}
+                                        placeholder="Re-enter your password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                    />
+                                    <i
+                                        className={`${styles.passwordToggle} fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    ></i>
+                                </div>
+                            </div>
+
+                            <button type="submit" className={styles.loginBtn}>Register</button>
+
+                            <div className={styles.divider}>OR</div>
+
+                            <button type="button" className={styles.googleBtn}>
+                                <div className={styles.googleIcon}></div>
+                                Continue with Google
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
