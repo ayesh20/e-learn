@@ -1,39 +1,65 @@
+// QuizSection.js
 import React, { useState } from "react";
 import styles from "./QuizSection.module.css";
 
 const QuizSection = () => {
+  const [quizzes, setQuizzes] = useState([{ id: 1, name: "Quiz 1" }]);
+  const [activeQuiz, setActiveQuiz] = useState(1);
   const [page, setPage] = useState(1);
+  const [questions, setQuestions] = useState(Array.from({ length: 24 }, (_, i) => i + 1));
+
+  const addQuiz = () => {
+    const nextId = quizzes.length + 1;
+    const newQuiz = { id: nextId, name: `Quiz ${nextId}` };
+    setQuizzes([...quizzes, newQuiz]);
+    setActiveQuiz(nextId);
+    setPage(1); // Reset page to first question of new quiz
+  };
+
+  const addQuestion = () => {
+    setQuestions([...questions, questions.length + 1]);
+    setPage(questions.length + 1);
+  };
 
   return (
     <div className={styles.quiz}>
       <h3>Add Quiz</h3>
 
       <div className={styles.top}>
-        <button className={styles.quizBtn}>Quiz 1</button>
-        <button className={styles.addBtn}>+</button>
+        {quizzes.map((q) => (
+          <button
+            key={q.id}
+            className={`${styles.quizBtn} ${activeQuiz === q.id ? styles.activeQuiz : ""}`}
+            onClick={() => setActiveQuiz(q.id)}
+          >
+            {q.name}
+          </button>
+        ))}
+        <button className={styles.addBtn} onClick={addQuiz}>+</button>
       </div>
 
       <div className={styles.main}>
         {/* Pagination grid */}
         <div className={styles.pagination}>
-          {Array.from({ length: 12 }).map((_, i) => (
+          {questions.map((num) => (
             <button
-              key={i}
-              className={page === i + 1 ? styles.active : ""}
-              onClick={() => setPage(i + 1)}
+              key={num}
+              className={`${styles.pageBtn} ${page === num ? styles.active : ""}`}
+              onClick={() => setPage(num)}
             >
-              {i + 1}
+              {num}
             </button>
           ))}
+          <button className={styles.addPageBtn} onClick={addQuestion}>+</button>
         </div>
 
         {/* Question form */}
         <div className={styles.questionBox}>
-          <input type="text" placeholder="Question" />
+          <input type="text" placeholder="Question" className={styles.inputField} />
           {[1, 2, 3, 4].map((num) => (
-            <input key={num} type="text" placeholder={`Answer ${num}`} />
+            <input key={num} type="text" placeholder={`Answer ${num}`} className={styles.inputField} />
           ))}
-          <input type="text" placeholder="Correct Answer" />
+          <input type="text" placeholder="Correct Answer" className={styles.inputField} />
 
           <div className={styles.actions}>
             <button>Previous</button>
@@ -44,7 +70,7 @@ const QuizSection = () => {
         </div>
       </div>
 
-      <button className={styles.bigSave}>Save</button>
+      <button className={styles.bigSave}>Save All</button>
     </div>
   );
 };

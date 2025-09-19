@@ -57,10 +57,7 @@ const CourseForm = () => {
             <select>
               <option>Category</option>
             </select>
-            <input type="text" placeholder="Duration" />
-            <select>
-              <option>Level</option>
-            </select>
+         
           </form>
         </div>
 

@@ -1,9 +1,11 @@
+// AddContent.js
 import React, { useState } from "react";
 import styles from "./AddContent.module.css";
-import { X } from "lucide-react";
+import { X, Edit, Plus } from "lucide-react";
 
 const AddContent = () => {
   const [page, setPage] = useState(1);
+  const [pages, setPages] = useState([1]);
   const [videoUploads, setVideoUploads] = useState([]);
   const [resourceUploads, setResourceUploads] = useState([]);
   const [assignmentUploads, setAssignmentUploads] = useState([]);
@@ -12,10 +14,11 @@ const AddContent = () => {
     const file = e.target.files[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
+    const newItem = { url, name: file.name, title: file.name, description: "" }; // Added title & description
 
-    if (type === "video") setVideoUploads([...videoUploads, url]);
-    if (type === "resource") setResourceUploads([...resourceUploads, url]);
-    if (type === "assignment") setAssignmentUploads([...assignmentUploads, url]);
+    if (type === "video") setVideoUploads([...videoUploads, newItem]);
+    if (type === "resource") setResourceUploads([...resourceUploads, newItem]);
+    if (type === "assignment") setAssignmentUploads([...assignmentUploads, newItem]);
   };
 
   const handleDelete = (index, type) => {
@@ -24,24 +27,90 @@ const AddContent = () => {
     if (type === "assignment") setAssignmentUploads(assignmentUploads.filter((_, i) => i !== index));
   };
 
+  const handleEditName = (index, type) => {
+    const newName = prompt("Enter new title:");
+    if (!newName) return;
+
+    if (type === "video") {
+      const updated = [...videoUploads];
+      updated[index].title = newName;
+      setVideoUploads(updated);
+    }
+    if (type === "resource") {
+      const updated = [...resourceUploads];
+      updated[index].title = newName;
+      setResourceUploads(updated);
+    }
+    if (type === "assignment") {
+      const updated = [...assignmentUploads];
+      updated[index].title = newName;
+      setAssignmentUploads(updated);
+    }
+  };
+
+  const handleEditDescription = (index, type) => {
+    const newDesc = prompt("Enter new description:");
+    if (!newDesc) return;
+
+    if (type === "video") {
+      const updated = [...videoUploads];
+      updated[index].description = newDesc;
+      setVideoUploads(updated);
+    }
+    if (type === "resource") {
+      const updated = [...resourceUploads];
+      updated[index].description = newDesc;
+      setResourceUploads(updated);
+    }
+    if (type === "assignment") {
+      const updated = [...assignmentUploads];
+      updated[index].description = newDesc;
+      setAssignmentUploads(updated);
+    }
+  };
+
+  const addPage = () => {
+    const next = pages.length + 1;
+    setPages([...pages, next]);
+    setPage(next);
+  };
+
+  const renderUploads = (uploads, type) => (
+    <div className={styles.preview}>
+      {uploads.map((item, i) => (
+        <div key={i} className={styles.fileBox}>
+          <div className={styles.uploadPreviewBox}>
+            <img src={item.url} alt={`${type}-${i}`} />
+            <div className={styles.overlay}>
+              <button onClick={() => handleEditName(i, type)} className={styles.editBtn}><Edit size={16} /></button>
+              <button onClick={() => handleDelete(i, type)} className={styles.deleteBtn}><X size={16} /></button>
+            </div>
+          </div>
+          <p className={styles.uploadTitle}>{item.title}</p>
+          {item.description && <p className={styles.uploadDesc}>{item.description}</p>}
+          <button className={styles.editDescBtn} onClick={() => handleEditDescription(i, type)}>Edit Description</button>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className={styles.wrapper}>
       <h3>Add Content</h3>
       <p>Sub Topics</p>
 
-      {/* Pagination numbers */}
+      {/* Pagination */}
       <div className={styles.pagination}>
-        <button onClick={() => setPage((p) => Math.max(1, p - 1))}>◀</button>
-        {Array.from({ length: 7 }).map((_, i) => (
+        {pages.map((num) => (
           <button
-            key={i}
-            className={page === i + 1 ? styles.active : ""}
-            onClick={() => setPage(i + 1)}
+            key={num}
+            className={`${styles.pageBtn} ${page === num ? styles.active : ""}`}
+            onClick={() => setPage(num)}
           >
-            {i + 1}
+            {num}
           </button>
         ))}
-        <button onClick={() => setPage((p) => p + 1)}>▶</button>
+        <button className={styles.addPageBtn} onClick={addPage}><Plus size={16} /></button>
       </div>
 
       <hr />
@@ -50,25 +119,17 @@ const AddContent = () => {
       <div className={styles.section}>
         <div className={styles.left}>
           <h4>{page}. Title & Subtitle</h4>
-          <input type="text" placeholder="Title" />
-          <input type="text" placeholder="Subtitle" />
-          <textarea placeholder="Description"></textarea>
+          <input type="text" placeholder="Title" className={styles.inputField} />
+          <input type="text" placeholder="Subtitle" className={styles.inputField} />
+          <textarea placeholder="Description" className={styles.textArea}></textarea>
           <div className={styles.uploadBox}>
             <p>Upload Video</p>
             <input type="file" onChange={(e) => handleUpload(e, "video")} />
           </div>
         </div>
-
         <div className={styles.right}>
           <h4>Uploaded Videos</h4>
-          <div className={styles.preview}>
-            {videoUploads.map((src, i) => (
-              <div key={i} className={styles.fileBox}>
-                <img src={src} alt="upload" />
-                <button onClick={() => handleDelete(i, "video")}><X size={16}/></button>
-              </div>
-            ))}
-          </div>
+          {renderUploads(videoUploads, "video")}
         </div>
       </div>
 
@@ -78,20 +139,15 @@ const AddContent = () => {
       <div className={styles.section}>
         <div className={styles.left}>
           <h4>Upload Resources</h4>
+          <input type="text" placeholder="Title" className={styles.inputField} />
+          <textarea placeholder="Description" className={styles.textArea}></textarea>
           <div className={styles.uploadBox}>
             <input type="file" onChange={(e) => handleUpload(e, "resource")} />
           </div>
         </div>
         <div className={styles.right}>
           <h4>Uploaded Resources</h4>
-          <div className={styles.preview}>
-            {resourceUploads.map((src, i) => (
-              <div key={i} className={styles.fileBox}>
-                <img src={src} alt="resource" />
-                <button onClick={() => handleDelete(i, "resource")}><X size={16}/></button>
-              </div>
-            ))}
-          </div>
+          {renderUploads(resourceUploads, "resource")}
         </div>
       </div>
 
@@ -101,22 +157,15 @@ const AddContent = () => {
       <div className={styles.section}>
         <div className={styles.left}>
           <h4>Add Assignment</h4>
-          <input type="text" placeholder="Title" />
-          <input type="text" placeholder="Description" />
+          <input type="text" placeholder="Title" className={styles.inputField} />
+          <input type="text" placeholder="Description" className={styles.inputField} />
           <div className={styles.uploadBox}>
             <input type="file" onChange={(e) => handleUpload(e, "assignment")} />
           </div>
         </div>
         <div className={styles.right}>
           <h4>Uploaded Assignments</h4>
-          <div className={styles.preview}>
-            {assignmentUploads.map((src, i) => (
-              <div key={i} className={styles.fileBox}>
-                <img src={src} alt="assignment" />
-                <button onClick={() => handleDelete(i, "assignment")}><X size={16}/></button>
-              </div>
-            ))}
-          </div>
+          {renderUploads(assignmentUploads, "assignment")}
         </div>
       </div>
     </div>

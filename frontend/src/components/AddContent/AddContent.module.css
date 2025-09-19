@@ -1,7 +1,9 @@
+/* AddContent.module.css */
 .wrapper {
   margin: 2rem auto;
   max-width: 1200px;
   width: 100%;
+  font-family: 'Poppins', sans-serif;
 }
 
 .pagination {
@@ -11,9 +13,10 @@
   margin: 1rem 0;
 }
 
-.pagination button {
-  width: 50px;
-  height: 50px;
+.pageBtn,
+.addPageBtn {
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
@@ -21,11 +24,19 @@
   color: #fff;
   font-size: 1.1rem;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
 }
 
-.pagination .active {
+.pageBtn.active {
   background: #cbdc2b;
   color: #000;
+}
+
+.addPageBtn {
+  background: #49BBBD;
 }
 
 .section {
@@ -45,11 +56,46 @@
   flex: 1;
 }
 
+.inputField {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.inputField:focus {
+  border-color: #49bbbd;
+  outline: none;
+  box-shadow: 0 0 5px rgba(73, 187, 189, 0.5);
+}
+
+.textArea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  min-height: 80px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.textArea:focus {
+  border-color: #49bbbd;
+  outline: none;
+  box-shadow: 0 0 5px rgba(73, 187, 189, 0.5);
+}
+
 .uploadBox {
   border: 2px dashed #aaa;
   border-radius: 12px;
   padding: 1rem;
   text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.uploadBox:hover {
+  border-color: #49bbbd;
 }
 
 .preview {
@@ -66,23 +112,65 @@
   position: relative;
   width: 100px;
   height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: 0.2s;
 }
 
 .fileBox img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
-.fileBox button {
+/* Overlay for edit/delete icons */
+.overlay {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ff4d4d;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: 0.2s;
+}
+
+.fileBox:hover .overlay {
+  opacity: 1;
+}
+
+.editBtn,
+.deleteBtn {
+  background: #fff;
   border: none;
   border-radius: 50%;
+  padding: 5px;
   cursor: pointer;
-  color: white;
-  padding: 2px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.editBtn {
+  color: #f0b429; /* yellow */
+}
+
+.deleteBtn {
+  color: #ff4d4d; /* red */
+}
+
+/* Borders for status */
+.red {
+  border-color: red !important; /* Already added */
+}
+
+.yellow {
+  border-color: yellow !important; /* Duplicate in section */
 }

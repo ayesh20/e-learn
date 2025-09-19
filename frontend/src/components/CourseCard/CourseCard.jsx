@@ -1,9 +1,16 @@
 // CourseCard.js
 import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import styles from "./CourseCard.module.css";
 
-const CourseCard = ({ title, description, benefits, price, imageUrl }) => {
+const CourseCard = ({ id, title, description, benefits, price, imageUrl, onDelete }) => {
+  const navigate = useNavigate();
+
+  const handleUpdate = () => {
+    navigate(`/lectureoverview`); // Navigate to LectureOverview page with course ID
+  };
+
   return (
     <div className={styles.card}>
       {/* Course Title */}
@@ -15,8 +22,10 @@ const CourseCard = ({ title, description, benefits, price, imageUrl }) => {
 
         {/* Update + Delete Overlay */}
         <div className={styles.overlay}>
-          <button className={styles.updateBtn}>Update</button>
-          <div className={styles.deleteIcon}>
+          <button className={styles.updateBtn} onClick={handleUpdate}>
+            Update
+          </button>
+          <div className={styles.deleteIcon} onClick={() => onDelete(id)}>
             <FaTrashAlt />
           </div>
         </div>
