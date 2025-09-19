@@ -2,19 +2,16 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  
+  font-family: 'Poppins', sans-serif;
 }
 
+/* Full page chat container */
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background: #e6f7f7;
-  width: 100%;   
-  margin: 0 auto;      
-  padding: 0 auto;  
-  font-family: Arial, sans-serif;
-  box-sizing: border-box;
+  height: calc(100vh - 80px); /* minus navbar/footer */
+  background: #f0f9f9;
+  width: 100%;
 }
 
 /* Header */
@@ -22,68 +19,79 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f4f4f6;
-  padding: 30px 70px;
+  background: #ffffff;
+  padding: 20px 40px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 10;
 }
 
 .left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .backIcon {
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
+  color: #42c5c5;
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 
 .name {
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 16px;
 }
 
-/* Course Button */
 .courseBtn {
   background: #42c5c5;
   border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: bold;
-  color: white;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.courseBtn:hover {
+  background: #36b0b0;
 }
 
 /* Chat body */
 .chatBody {
   flex: 1;
-  padding: 110px;
+  padding: 20px 40px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 15px;
   overflow-y: auto;
 }
 
+/* Messages */
 .message {
-  max-width: 60%;
-  padding: 10px 15px;
-  border-radius: 15px;
+  max-width: 70%;
+  padding: 12px 18px;
+  border-radius: 20px;
   position: relative;
+  word-wrap: break-word;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
 .instructor {
-  background: white;
+  background: #ffffff;
   align-self: flex-start;
   border-bottom-left-radius: 0;
 }
 
 .student {
   background: #42c5c5;
-  color: white;
+  color: #fff;
   align-self: flex-end;
   border-bottom-right-radius: 0;
 }
@@ -91,104 +99,71 @@
 .time {
   display: block;
   font-size: 10px;
-  opacity: 0.6;
+  color: rgba(0,0,0,0.5);
   margin-top: 5px;
   text-align: right;
 }
 
-/* Input Box */
+/* Input box */
 .inputBox {
   display: flex;
   align-items: center;
-  background: #e8e8e8;
-  padding: 30px;
+  padding: 15px 40px;
+  background: #f4f4f4;
   gap: 10px;
 }
 
 .inputBox input {
   flex: 1;
   border: none;
-  padding: 32px;
-  border-radius: 8px;
+  padding: 15px 20px;
+  border-radius: 25px;
   outline: none;
   font-size: 14px;
 }
 
 .inputBox button {
   background: #42c5c5;
-  color: white;
-  font-weight: bold;
-  padding: 20px 28px;
+  color: #fff;
+  font-weight: 600;
   border: none;
-  border-radius: 20px;
+  border-radius: 25px;
+  padding: 12px 25px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
+.inputBox button:hover {
+  background: #36b0b0;
+}
 
-/* Tablets (≤768px) */
+/* Scrollbar for chat body */
+.chatBody::-webkit-scrollbar {
+  width: 6px;
+}
+.chatBody::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .header {
-    padding: 20px 30px;
-  }
-
-  .chatBody {
-    padding: 40px;
-  }
-
-  .message {
-    max-width: 75%;
-    font-size: 14px;
-  }
-
-  .inputBox {
-    padding: 20px;
-  }
-
-  .inputBox input {
-    padding: 16px;
-    font-size: 13px;
-  }
-
-  .inputBox button {
-    padding: 14px 20px;
-    font-size: 14px;
-  }
+  .header { padding: 15px 20px; }
+  .avatar { width: 40px; height: 40px; }
+  .name { font-size: 14px; }
+  .chatBody { padding: 15px 20px; gap: 12px; }
+  .message { max-width: 80%; padding: 10px 14px; font-size: 14px; }
+  .inputBox { padding: 10px 20px; gap: 8px; }
+  .inputBox input { padding: 10px 14px; font-size: 13px; }
+  .inputBox button { padding: 10px 18px; font-size: 13px; }
 }
 
-/* Mobile Phones (≤480px) */
 @media (max-width: 480px) {
-  .header {
-    padding: 15px 20px;
-  }
-
-  .name {
-    font-size: 14px;
-  }
-
-  .chatBody {
-    padding: 20px 15px;
-    gap: 15px;
-  }
-
-  .message {
-    max-width: 85%;
-    font-size: 13px;
-    padding: 8px 12px;
-  }
-
-  .inputBox {
-    padding: 12px;
-    gap: 8px;
-  }
-
-  .inputBox input {
-    padding: 12px;
-    font-size: 12px;
-  }
-
-  .inputBox button {
-    padding: 10px 16px;
-    font-size: 12px;
-    border-radius: 16px;
-  }
+  .header { padding: 12px 15px; }
+  .avatar { width: 35px; height: 35px; }
+  .chatBody { padding: 10px 15px; gap: 10px; }
+  .message { max-width: 85%; font-size: 13px; padding: 8px 12px; }
+  .inputBox { padding: 8px 15px; gap: 6px; }
+  .inputBox input { padding: 8px 12px; font-size: 12px; }
+  .inputBox button { padding: 8px 14px; font-size: 12px; }
 }

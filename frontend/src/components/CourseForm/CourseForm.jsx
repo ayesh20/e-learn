@@ -36,11 +36,7 @@ const CourseForm = () => {
             <button className={styles.addBtn}>Add</button>
           </div>
           <div className={styles.headerRight}>
-            <div className={styles.filterContainer}>
-              <select className={styles.filterDropdown}>
-                <option>Category</option>
-              </select>
-            </div>
+          
           </div>
         </div>
       </div>

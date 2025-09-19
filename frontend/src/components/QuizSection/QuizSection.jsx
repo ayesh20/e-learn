@@ -1,8 +1,9 @@
-// QuizSection.js
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./QuizSection.module.css";
 
 const QuizSection = () => {
+  const navigate = useNavigate(); // Add this
   const [quizzes, setQuizzes] = useState([{ id: 1, name: "Quiz 1" }]);
   const [activeQuiz, setActiveQuiz] = useState(1);
   const [page, setPage] = useState(1);
@@ -13,12 +14,18 @@ const QuizSection = () => {
     const newQuiz = { id: nextId, name: `Quiz ${nextId}` };
     setQuizzes([...quizzes, newQuiz]);
     setActiveQuiz(nextId);
-    setPage(1); // Reset page to first question of new quiz
+    setPage(1);
   };
 
   const addQuestion = () => {
     setQuestions([...questions, questions.length + 1]);
     setPage(questions.length + 1);
+  };
+
+  const handleSaveAll = () => {
+    // You can add saving logic here (API call, localStorage, etc.)
+    // After saving, navigate back to the dashboard
+    navigate("/instructordashboard");
   };
 
   return (
@@ -39,7 +46,6 @@ const QuizSection = () => {
       </div>
 
       <div className={styles.main}>
-        {/* Pagination grid */}
         <div className={styles.pagination}>
           {questions.map((num) => (
             <button
@@ -53,7 +59,6 @@ const QuizSection = () => {
           <button className={styles.addPageBtn} onClick={addQuestion}>+</button>
         </div>
 
-        {/* Question form */}
         <div className={styles.questionBox}>
           <input type="text" placeholder="Question" className={styles.inputField} />
           {[1, 2, 3, 4].map((num) => (
@@ -70,7 +75,7 @@ const QuizSection = () => {
         </div>
       </div>
 
-      <button className={styles.bigSave}>Save All</button>
+      <button className={styles.bigSave} onClick={handleSaveAll}>Save All</button>
     </div>
   );
 };
