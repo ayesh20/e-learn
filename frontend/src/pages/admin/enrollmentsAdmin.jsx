@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { enrollmentAPI, courseAPI, userAPI } from '../../services/api'
 import './admin.css'
 
 export default function EnrollmentsAdmin() {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-
+import { courseAPI, userAPI, instructorAPI, enrollmentAPI } from '../../services/api'
 import './admin.css'
 
 export default function Dashboard() {

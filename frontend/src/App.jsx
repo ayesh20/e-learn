@@ -37,7 +37,6 @@ function App() {
           <Route path="/Home" element={<HomePage/>} />
           <Route path="/register" element={<Register/>} />
           <Route path="/course-details" element={<CourseDetails/>} />
-          
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/OTPVerification" element={<OTPVerification />} />
           <Route path="/ResetConfirm" element={<ResetConfirm />} />
@@ -46,9 +45,6 @@ function App() {
           <Route path="/InstructorDashboard" element={<InstructorDashboard />} />
           <Route path="/LectureOverview" element={<LectureOverview />} />
           <Route path="/courses" element={<Courses/>} />
-
-
-
 
          <Route path="/profileedit"  element={<ProfileEdit/>}/>
          <Route path="/aboutus"  element={<Aboutus/>}/>

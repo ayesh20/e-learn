@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-
+import { instructorAPI } from '../../services/api'
 import { getImageUrl, handleImageError } from '../../utils/imageUtils'
 import './admin.css'
 

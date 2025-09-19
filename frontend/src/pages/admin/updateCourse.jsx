@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-
+import { courseAPI, instructorAPI } from '../../services/api'
 import './admin.css'
 
 export default function UpdateCourse() {
