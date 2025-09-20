@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
@@ -7,6 +7,15 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function HomePage() {
     const navigate = useNavigate();
+    const [userType, setUserType] = useState('');
+
+    // Get userType from localStorage on component mount
+    useEffect(() => {
+        const storedUserType = localStorage.getItem('userType');
+        if (storedUserType) {
+            setUserType(storedUserType);
+        }
+    }, []);
 
     const statsData = [
         { number: '15K+', label: 'Students' },
@@ -14,6 +23,23 @@ export default function HomePage() {
         { number: '35', label: 'Main questions' },
         { number: '26', label: 'Lectures' }
     ];
+
+    const handleInstructorAccess = () => {
+        if (userType === 'instructor' || userType === '') {
+            navigate('/InstructorDashboard');
+        } else {
+            alert('Access denied: This feature is only available for instructors');
+            // Or you could use a more sophisticated notification system
+        }
+    };
+
+    const handleStudentAccess = () => {
+        if (userType === 'student' || userType === '') {
+            navigate("/mycourses");
+        } else {
+            alert('Access denied: This feature is only available for students');
+        }
+    };
 
     return (
         <div className={styles.homePage}>
@@ -121,7 +147,7 @@ export default function HomePage() {
                                 <h3 className={styles.cardTitle}>FOR INSTRUCTORS</h3>
                                 <button 
                                     className={styles.cardBtn} 
-                                    onClick={() => navigate("/InstructorDashboard")}
+                                    onClick={handleInstructorAccess}
                                 >
                                     Access to course
                                 </button>
@@ -138,7 +164,7 @@ export default function HomePage() {
                                 <h3 className={styles.cardTitle}>FOR STUDENTS</h3>
                                 <button 
                                     className={styles.cardBtn} 
-                                    onClick={() => navigate("/courses")}
+                                    onClick={handleStudentAccess}
                                 >
                                     Access to course
                                 </button>

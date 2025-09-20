@@ -21,22 +21,54 @@ export default function EnrollmentsAdmin() {
     try {
       setLoading(true)
       
-      // Fetch all data in parallel
-      const [enrollmentsData, coursesData, usersData] = await Promise.all([
-        enrollmentAPI.getAllEnrollments(),
-        courseAPI.getAllCourses(),
-        userAPI.getAllUsers()
+      // Helper function to handle different API response formats
+      const handleApiResponse = (response, dataKey = null) => {
+        if (Array.isArray(response)) {
+          return response
+        } else if (response && dataKey && Array.isArray(response[dataKey])) {
+          return response[dataKey]
+        } else if (response && Array.isArray(response.data)) {
+          return response.data
+        }
+        return []
+      }
+
+      // Fetch all data in parallel with error handling
+      const [enrollmentsResponse, coursesResponse, usersResponse] = await Promise.all([
+        enrollmentAPI.getAllEnrollments().catch(err => {
+          console.error('Error fetching enrollments:', err)
+          return []
+        }),
+        courseAPI.getAllCourses().catch(err => {
+          console.error('Error fetching courses:', err)
+          return []
+        }),
+        userAPI.getAllUsers().catch(err => {
+          console.error('Error fetching users:', err)
+          return []
+        })
       ])
+
+      console.log('Enrollments API Responses:', { enrollmentsResponse, coursesResponse, usersResponse })
+
+      // Handle API responses
+      const enrollmentsData = handleApiResponse(enrollmentsResponse, 'enrollments')
+      const coursesData = handleApiResponse(coursesResponse, 'courses')
+      const usersData = handleApiResponse(usersResponse, 'users')
 
       // Create lookup objects for courses and students
       const coursesMap = {}
       coursesData.forEach(course => {
-        coursesMap[course._id] = course
+        if (course && course._id) {
+          coursesMap[course._id] = course
+        }
       })
 
       const studentsMap = {}
       usersData.forEach(user => {
-        studentsMap[user._id] = user
+        if (user && user._id) {
+          studentsMap[user._id] = user
+        }
       })
 
       setEnrollments(enrollmentsData)
@@ -45,13 +77,21 @@ export default function EnrollmentsAdmin() {
       setError(null)
     } catch (err) {
       setError('Failed to fetch enrollments: ' + err.message)
-      console.error('Error fetching enrollments:', err)
+      console.error('Error in fetchEnrollments:', err)
+      setEnrollments([])
+      setCourses({})
+      setStudents({})
     } finally {
       setLoading(false)
     }
   }
 
   const handleUpdateEnrollmentStatus = async (enrollmentId, newStatus) => {
+    if (!enrollmentId || !newStatus) {
+      console.error('Invalid enrollment ID or status')
+      return
+    }
+
     try {
       await enrollmentAPI.updateEnrollment(enrollmentId, { status: newStatus })
       fetchEnrollments()
@@ -63,6 +103,11 @@ export default function EnrollmentsAdmin() {
   }
 
   const handleDeleteEnrollment = async (enrollmentId) => {
+    if (!enrollmentId) {
+      console.error('Invalid enrollment ID')
+      return
+    }
+
     if (window.confirm('Are you sure you want to delete this enrollment?')) {
       try {
         await enrollmentAPI.deleteEnrollment(enrollmentId)
@@ -86,6 +131,8 @@ export default function EnrollmentsAdmin() {
   }
 
   const filteredEnrollments = enrollments.filter(enrollment => {
+    if (!enrollment) return false
+    
     const course = courses[enrollment.courseId] || {}
     const student = students[enrollment.studentId] || {}
     const studentName = `${student.firstName || ''} ${student.lastName || ''}`.trim()
@@ -210,6 +257,8 @@ export default function EnrollmentsAdmin() {
           </thead>
           <tbody>
             {filteredEnrollments.map((enrollment) => {
+              if (!enrollment || !enrollment._id) return null
+              
               const course = courses[enrollment.courseId] || {}
               const student = students[enrollment.studentId] || {}
               const studentName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || 'Unknown Student'
@@ -222,13 +271,13 @@ export default function EnrollmentsAdmin() {
                   <td>
                     <div style={{ fontWeight: 'bold' }}>{studentName}</div>
                     <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
-                      {student.email}
+                      {student.email || 'N/A'}
                     </div>
                   </td>
                   <td>
                     <div style={{ fontWeight: 'bold' }}>{course.name || 'Unknown Course'}</div>
                     <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
-                      {course.category}
+                      {course.category || 'N/A'}
                     </div>
                   </td>
                   <td className="instructor-name">{course.instructor || 'N/A'}</td>
@@ -236,10 +285,10 @@ export default function EnrollmentsAdmin() {
                     {enrollment.enrollmentDate ? new Date(enrollment.enrollmentDate).toLocaleDateString() : 'N/A'}
                   </td>
                   <td className="course-price">
-                    {enrollment.amount ? `LKR ${enrollment.amount}` : 'Free'}
+                    {enrollment.amount ? `LKR ${enrollment.amount}` : (course.price === 0 || course.price === '0' ? 'Free' : 'N/A')}
                   </td>
                   <td className="status">
-                    <span className={`status-badge ${getStatusBadgeClass(enrollment.status)}`}>
+                    <span className={`status-badge ${getStatusBadgeClass(enrollment.status || 'pending')}`}>
                       {enrollment.status || 'pending'}
                     </span>
                   </td>
@@ -264,7 +313,7 @@ export default function EnrollmentsAdmin() {
                       onClick={() => navigate(`/admin/enrollments/view/${enrollment._id}`)}
                       title="View Enrollment Details"
                     >
-                      👁️
+                      View
                     </button>
                     
                     {enrollment.status === 'pending' && (
@@ -274,7 +323,7 @@ export default function EnrollmentsAdmin() {
                         title="Approve Enrollment"
                         style={{ fontSize: '12px', padding: '6px 8px' }}
                       >
-                        ✅
+                        Approve
                       </button>
                     )}
                     
@@ -285,25 +334,27 @@ export default function EnrollmentsAdmin() {
                         title="Mark as Completed"
                         style={{ fontSize: '12px', padding: '6px 8px' }}
                       >
-                        🏆
+                        Complete
                       </button>
                     )}
                     
-                    <button 
-                      className="action-btn cancel-btn"
-                      onClick={() => handleUpdateEnrollmentStatus(enrollment._id, 'cancelled')}
-                      title="Cancel Enrollment"
-                      style={{ fontSize: '12px', padding: '6px 8px' }}
-                    >
-                      ❌
-                    </button>
+                    {enrollment.status !== 'cancelled' && (
+                      <button 
+                        className="action-btn cancel-btn"
+                        onClick={() => handleUpdateEnrollmentStatus(enrollment._id, 'cancelled')}
+                        title="Cancel Enrollment"
+                        style={{ fontSize: '12px', padding: '6px 8px' }}
+                      >
+                        Cancel
+                      </button>
+                    )}
                     
                     <button 
                       className="action-btn delete-btn"
                       onClick={() => handleDeleteEnrollment(enrollment._id)}
                       title="Delete Enrollment"
                     >
-                      🗑️
+                      Delete
                     </button>
                   </td>
                 </tr>

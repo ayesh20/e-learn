@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { instructorAPI } from '../../services/api'
+import { instructorAPI, courseAPI } from '../../services/api'
 import { getImageUrl, handleImageError } from '../../utils/imageUtils'
 import './admin.css'
 
@@ -9,6 +9,7 @@ export default function InstructorsAdmin() {
   const [instructors, setInstructors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     fetchInstructors()
@@ -17,12 +18,64 @@ export default function InstructorsAdmin() {
   const fetchInstructors = async () => {
     try {
       setLoading(true)
-      const data = await instructorAPI.getAllInstructors()
-      setInstructors(data)
+      const response = await instructorAPI.getAllInstructors()
+      
+      // Log the response to debug the structure
+      console.log('API Response:', response)
+      
+      // Handle different response formats
+      let data = response
+      if (response && response.instructors) {
+        data = response.instructors
+      } else if (response && response.data) {
+        data = response.data
+      }
+      
+      // Ensure data is an array
+      if (!Array.isArray(data)) {
+        console.error('API did not return an array:', data)
+        setInstructors([])
+        setError('Invalid data format received from server')
+        return
+      }
+      
+      // Fetch course count for each instructor
+      const instructorsWithCourses = await Promise.all(
+        data.map(async (instructor) => {
+          try {
+            // Check if courseAPI.getCoursesByInstructor exists
+            if (courseAPI.getCoursesByInstructor) {
+              const courses = await courseAPI.getCoursesByInstructor(instructor._id)
+              return {
+                ...instructor,
+                coursesCount: courses?.length || 0,
+                courses: courses || []
+              }
+            } else {
+              // Fallback if the method doesn't exist
+              return {
+                ...instructor,
+                coursesCount: instructor.coursesCount || 0,
+                courses: []
+              }
+            }
+          } catch (err) {
+            console.error(`Error fetching courses for instructor ${instructor._id}:`, err)
+            return {
+              ...instructor,
+              coursesCount: instructor.coursesCount || 0,
+              courses: []
+            }
+          }
+        })
+      )
+      
+      setInstructors(instructorsWithCourses)
       setError(null)
     } catch (err) {
       setError('Failed to fetch instructors: ' + err.message)
       console.error('Error fetching instructors:', err)
+      setInstructors([]) // Set empty array on error
     } finally {
       setLoading(false)
     }
@@ -42,6 +95,11 @@ export default function InstructorsAdmin() {
   }
 
   const handleUpdateInstructor = (instructor) => {
+    if (!instructor || !instructor._id) {
+      console.error('Invalid instructor data for update')
+      return
+    }
+    
     navigate('/admin/instructors/update', { 
       state: { instructorData: instructor } 
     })
@@ -58,6 +116,14 @@ export default function InstructorsAdmin() {
       console.error('Error updating instructor status:', err)
     }
   }
+
+  const filteredInstructors = instructors.filter(instructor =>
+    instructor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    instructor.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    instructor.expertise?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    instructor.phone?.includes(searchTerm) ||
+    instructor.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   if (loading) {
     return (
@@ -82,18 +148,59 @@ export default function InstructorsAdmin() {
     <div className="dashboard">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1 className="dashboard-title" style={{ marginBottom: 0 }}>Instructors Management</h1>
-        <Link to="/admin/instructors/add" className="add-product-btn">
-          ➕ Add New Instructor
-        </Link>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <input
+            type="text"
+            placeholder="Search instructors..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="form-input"
+            style={{ width: '250px', margin: 0 }}
+          />
+          <Link to="/admin/instructors/add" className="add-product-btn">
+            ➕ Add New Instructor
+          </Link>
+        </div>
       </div>
 
-      {instructors.length === 0 ? (
+      {/* Statistics Cards */}
+      <div className="dashboard-stats" style={{ marginBottom: '30px' }}>
+        <div className="stat-card">
+          <h3>Total Instructors</h3>
+          <div className="stat-number">{instructors.length}</div>
+          <div className="stat-label">Registered instructors</div>
+        </div>
+        
+        <div className="stat-card">
+          <h3>Active Instructors</h3>
+          <div className="stat-number">{instructors.filter(i => i.status !== 'inactive').length}</div>
+          <div className="stat-label">Currently active</div>
+        </div>
+        
+        <div className="stat-card">
+          <h3>Total Courses</h3>
+          <div className="stat-number">{instructors.reduce((sum, i) => sum + (i.coursesCount || 0), 0)}</div>
+          <div className="stat-label">Courses taught</div>
+        </div>
+        
+        <div className="stat-card">
+          <h3>Avg Courses</h3>
+          <div className="stat-number">
+            {instructors.length > 0 ? (instructors.reduce((sum, i) => sum + (i.coursesCount || 0), 0) / instructors.length).toFixed(1) : 0}
+          </div>
+          <div className="stat-label">Per instructor</div>
+        </div>
+      </div>
+
+      {filteredInstructors.length === 0 ? (
         <div className="no-instructors">
           <h3>No instructors found</h3>
-          <p>Get started by adding your first instructor!</p>
-          <Link to="/admin/instructors/add" className="add-product-btn" style={{ textDecoration: 'none', display: 'inline-block', marginTop: '15px' }}>
-            Add First Instructor
-          </Link>
+          <p>{searchTerm ? 'No instructors match your search criteria.' : 'Get started by adding your first instructor!'}</p>
+          {!searchTerm && (
+            <Link to="/admin/instructors/add" className="add-product-btn" style={{ textDecoration: 'none', display: 'inline-block', marginTop: '15px' }}>
+              Add First Instructor
+            </Link>
+          )}
         </div>
       ) : (
         <table className="product-table">
@@ -111,32 +218,43 @@ export default function InstructorsAdmin() {
             </tr>
           </thead>
           <tbody>
-            {instructors.map((instructor) => (
+            {filteredInstructors.map((instructor) => (
               <tr key={instructor._id}>
                 <td>
                   <img 
                     src={getImageUrl(instructor.photo)} 
-                    alt={instructor.name} 
+                    alt={instructor.name || 'Instructor'} 
                     className="product-image"
                     onError={handleImageError}
                   />
                 </td>
                 <td className="instructor-name">
-                  <div style={{ fontWeight: 'bold' }}>{instructor.name}</div>
+                  <div style={{ fontWeight: 'bold' }}>{instructor.name || 'N/A'}</div>
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
                     {instructor.title || 'Instructor'}
                   </div>
                 </td>
-                <td>{instructor.email}</td>
-                <td>{instructor.phone}</td>
+                <td className="email">{instructor.email || 'N/A'}</td>
+                <td className="phone">{instructor.phone || 'N/A'}</td>
                 <td>
-                  <div style={{ fontSize: '14px' }}>{instructor.expertise}</div>
+                  <div style={{ fontSize: '14px' }}>{instructor.expertise || 'N/A'}</div>
                 </td>
                 <td>{instructor.experience || 'N/A'}</td>
-                <td>{instructor.coursesCount || 0}</td>
+                <td style={{ textAlign: 'center' }}>
+                  <span style={{ 
+                    background: (instructor.coursesCount || 0) > 0 ? '#4ECDC4' : '#ddd', 
+                    color: (instructor.coursesCount || 0) > 0 ? 'white' : '#666',
+                    padding: '4px 8px', 
+                    borderRadius: '12px', 
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}>
+                    {instructor.coursesCount || 0}
+                  </span>
+                </td>
                 <td className="status">
-                  <span className={`status-badge ${instructor.status === 'active' ? 'active' : 'inactive'}`}>
-                    {instructor.status === 'active' ? 'Active' : 'Inactive'}
+                  <span className={`status-badge ${instructor.status === 'inactive' ? 'inactive' : 'active'}`}>
+                    {instructor.status === 'inactive' ? 'Inactive' : 'Active'}
                   </span>
                 </td>
                 <td className="actions">
@@ -155,12 +273,19 @@ export default function InstructorsAdmin() {
                     ✏️
                   </button>
                   <button 
-                    className={`action-btn ${instructor.status === 'active' ? 'cancel-btn' : 'add-product-btn'}`}
+                    className="action-btn update-btn"
+                    onClick={() => navigate(`/admin/instructors/courses/${instructor._id}`)}
+                    title="View Courses"
+                  >
+                    📚
+                  </button>
+                  <button 
+                    className={`action-btn ${instructor.status === 'inactive' ? 'add-product-btn' : 'cancel-btn'}`}
                     onClick={() => handleToggleInstructorStatus(instructor._id, instructor.status)}
-                    title={instructor.status === 'active' ? 'Deactivate Instructor' : 'Activate Instructor'}
+                    title={instructor.status === 'inactive' ? 'Activate Instructor' : 'Deactivate Instructor'}
                     style={{ fontSize: '12px', padding: '6px 8px' }}
                   >
-                    {instructor.status === 'active' ? '⏸️' : '▶️'}
+                    {instructor.status === 'inactive' ? '▶️' : '⏸️'}
                   </button>
                   <button 
                     className="action-btn delete-btn"

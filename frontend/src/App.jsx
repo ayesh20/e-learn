@@ -23,6 +23,7 @@ import AdminLayout from "./pages/admin/adminpage.jsx";
 import QuizStudent from "./pages/QuizStudent/quizStudent.jsx";
 import QuizInstructor from "./pages/quizInstructor/quizInstructor.jsx";
 import Courses from "./pages/Courses/Courses.jsx";
+import MyCourses from "./pages/MyCourses/MyCourses.jsx";
 
 
 
@@ -45,7 +46,7 @@ function App() {
           <Route path="/InstructorDashboard" element={<InstructorDashboard />} />
           <Route path="/LectureOverview" element={<LectureOverview />} />
           <Route path="/courses" element={<Courses/>} />
-
+          <Route path="/mycourses" element={<MyCourses/>}/>
          <Route path="/profileedit"  element={<ProfileEdit/>}/>
          <Route path="/aboutus"  element={<Aboutus/>}/>
          <Route path="/contactus"  element={<Contactus/>}/>

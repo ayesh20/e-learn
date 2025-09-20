@@ -76,12 +76,13 @@ export default function AdminLayout() {
       
         <Routes>
           <Route path="/" element={<Dashboard/>}/>
-          <Route path="/courses" element={<CoursesAdmin/>}/>
+          
           <Route path="/courses/add" element={<AddCourse/>}/>
           <Route path="/courses/update" element={<UpdateCourse/>}/>
           <Route path="/students" element={<StudentsAdmin/>}/>
           <Route path="/instructors" element={<InstructorsAdmin/>}/>
           <Route path="/enrollments" element={<EnrollmentsAdmin/>}/>
+          <Route path='/courses' element={<CoursesAdmin/>}/>
           {/* Add other routes as needed */}
         </Routes>
       </main>

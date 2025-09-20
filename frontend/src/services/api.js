@@ -144,17 +144,7 @@ export const analyticsAPI = {
   getRevenueAnalytics: () => apiClient.get('/analytics/revenue'),
 }
 
-// Authentication API
-export const authAPI = {
-  login: (credentials) => apiClient.post('/auth/login', credentials),
-  register: (userData) => apiClient.post('/auth/register', userData),
-  logout: () => apiClient.post('/auth/logout'),
-  refreshToken: () => apiClient.post('/auth/refresh'),
-  verifyToken: () => apiClient.get('/auth/verify'),
-  forgotPassword: (email) => apiClient.post('/auth/forgot-password', { email }),
-  resetPassword: (token, newPassword) => apiClient.post('/auth/reset-password', { token, newPassword }),
-  changePassword: (currentPassword, newPassword) => apiClient.put('/auth/change-password', { currentPassword, newPassword }),
-}
+
 
 // File Upload API
 export const uploadAPI = {
@@ -218,7 +208,6 @@ const api = {
   enrollment: enrollmentAPI,
   product: productAPI,
   analytics: analyticsAPI,
-  auth: authAPI,
   upload: uploadAPI,
 }
 

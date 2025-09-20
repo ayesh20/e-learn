@@ -350,3 +350,218 @@ header h2 {
     min-width: 150px;
   }
 }
+/* Additional styles to add to your existing MyCourses.css */
+
+/* Loading and Error States */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  text-align: center;
+}
+
+.loading-spinner p {
+  color: #666;
+  font-size: 16px;
+}
+
+.error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.error-message button {
+  background: #c33;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.error-message button:hover {
+  background: #a22;
+}
+
+/* No Courses State */
+.no-courses {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.no-courses p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.no-courses p:first-child {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Enhanced Card Hover Effects */
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Progress Bar Enhancement */
+.progress-bar {
+  background: #e0e0e0;
+  border-radius: 10px;
+  height: 8px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.progress {
+  background: linear-gradient(90deg, #4CAF50, #45a049);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* Lesson Info Enhancement */
+.lesson-info {
+  font-size: 14px;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Button Enhancements */
+.more-btn button:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Category Dropdown Enhancement */
+.dropdown select {
+  appearance: none;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.dropdown select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.dropdown select:hover {
+  border-color: #ccc;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  .course-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .section_1 header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .dropdown {
+    width: 100%;
+  }
+  
+  .dropdown select {
+    width: 100%;
+  }
+}
+
+/* Loading Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+/* Course Card Enhancements */
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #333;
+  line-height: 1.4;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.author img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Success States */
+.success-message {
+  background: #e8f5e8;
+  border: 1px solid #c3e6c3;
+  color: #2e7d2e;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin: 10px 0;
+}
+
+/* Interactive Elements */
+.interactive-element {
+  transition: all 0.2s ease;
+}
+
+.interactive-element:hover {
+  transform: scale(1.02);
+}
+
+.interactive-element:active {
+  transform: scale(0.98);
+}
