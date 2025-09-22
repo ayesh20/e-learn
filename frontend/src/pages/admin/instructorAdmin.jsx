@@ -94,28 +94,8 @@ export default function InstructorsAdmin() {
     }
   }
 
-  const handleUpdateInstructor = (instructor) => {
-    if (!instructor || !instructor._id) {
-      console.error('Invalid instructor data for update')
-      return
-    }
-    
-    navigate('/admin/instructors/update', { 
-      state: { instructorData: instructor } 
-    })
-  }
 
-  const handleToggleInstructorStatus = async (instructorId, currentStatus) => {
-    try {
-      const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
-      await instructorAPI.updateInstructor(instructorId, { status: newStatus })
-      fetchInstructors()
-      alert(`Instructor ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`)
-    } catch (err) {
-      alert('Failed to update instructor status: ' + err.message)
-      console.error('Error updating instructor status:', err)
-    }
-  }
+
 
   const filteredInstructors = instructors.filter(instructor =>
     instructor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -258,35 +238,7 @@ export default function InstructorsAdmin() {
                   </span>
                 </td>
                 <td className="actions">
-                  <button 
-                    className="action-btn view-btn"
-                    onClick={() => navigate(`/admin/instructors/view/${instructor._id}`)}
-                    title="View Instructor Profile"
-                  >
-                    👁️
-                  </button>
-                  <button 
-                    className="action-btn update-btn"
-                    onClick={() => handleUpdateInstructor(instructor)}
-                    title="Edit Instructor"
-                  >
-                    ✏️
-                  </button>
-                  <button 
-                    className="action-btn update-btn"
-                    onClick={() => navigate(`/admin/instructors/courses/${instructor._id}`)}
-                    title="View Courses"
-                  >
-                    📚
-                  </button>
-                  <button 
-                    className={`action-btn ${instructor.status === 'inactive' ? 'add-product-btn' : 'cancel-btn'}`}
-                    onClick={() => handleToggleInstructorStatus(instructor._id, instructor.status)}
-                    title={instructor.status === 'inactive' ? 'Activate Instructor' : 'Deactivate Instructor'}
-                    style={{ fontSize: '12px', padding: '6px 8px' }}
-                  >
-                    {instructor.status === 'inactive' ? '▶️' : '⏸️'}
-                  </button>
+                 
                   <button 
                     className="action-btn delete-btn"
                     onClick={() => handleDeleteInstructor(instructor._id)}
@@ -301,10 +253,7 @@ export default function InstructorsAdmin() {
         </table>
       )}
 
-      {/* Floating Add Button */}
-      <Link to="/admin/instructors/add" className="fab" title="Add New Instructor">
-        +
-      </Link>
+      
     </div>
   )
 }

@@ -9,35 +9,55 @@ const apiClient = axios.create({
   },
 })
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token (FIXED - skips auth for public endpoints)
 apiClient.interceptors.request.use(
   (config) => {
-    // Add authorization token if available
-    const token = localStorage.getItem('authToken')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    // Define public endpoints that don't need authentication
+    const publicEndpoints = [
+      '/students/login',
+      '/students/register',
+      '/instructors/login'
+    ];
+    
+    // Check if this is a registration/login request
+    const isPublicEndpoint = publicEndpoints.some(endpoint => 
+      config.url.includes(endpoint)
+    );
+    
+    // Special case: POST to /students or /instructors (registration) should also be public
+    const isRegistration = (config.url.includes('/students') && 
+                          config.method === 'post' && 
+                          !config.url.includes('/students/')) ||
+                          (config.url.includes('/instructors') && 
+                          config.method === 'post' && 
+                          !config.url.includes('/instructors/'));
+    
+    // Add authorization token only if not a public endpoint
+    if (!isPublicEndpoint && !isRegistration) {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
-    return config
+    
+    return config;
   },
   (error) => {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
 )
 
-
+// Response interceptor (unchanged)
 apiClient.interceptors.response.use(
   (response) => {
     return response.data
   },
   (error) => {
-    
     if (error.response) {
-      
       const errorMessage = error.response.data?.message || error.response.data || `HTTP error! status: ${error.response.status}`
       console.error(`API request failed:`, errorMessage)
       throw new Error(errorMessage)
     } else if (error.request) {
-      
       console.error('Network error:', error.request)
       throw new Error('Network error - please check your connection')
     } else {
@@ -52,7 +72,6 @@ export const courseAPI = {
   getAllCourses: () => apiClient.get('/courses'),
   getCourse: (courseId) => apiClient.get(`/courses/${courseId}`),
   createCourse: (courseData) => {
-    
     const config = courseData instanceof FormData ? {
       headers: { 'Content-Type': 'multipart/form-data' }
     } : {}
@@ -64,26 +83,34 @@ export const courseAPI = {
 
 // Instructor API
 export const instructorAPI = {
-  getAllInstructors: () => apiClient.get('/instructors'),
-  getInstructor: (instructorId) => apiClient.get(`/instructors/${instructorId}`),
+  // Public endpoints (no auth required)
+  loginInstructor: (credentials) => apiClient.post('/instructors/login', credentials),
   createInstructor: (instructorData) => {
-    
     const config = instructorData instanceof FormData ? {
       headers: { 'Content-Type': 'multipart/form-data' }
     } : {}
     return apiClient.post('/instructors', instructorData, config)
   },
+  
+  // Protected endpoints (require auth)
+  getAllInstructors: () => apiClient.get('/instructors'),
+  getInstructor: (instructorId) => apiClient.get(`/instructors/${instructorId}`),
   updateInstructor: (instructorId, instructorData) => apiClient.put(`/instructors/${instructorId}`, instructorData),
   deleteInstructor: (instructorId) => apiClient.delete(`/instructors/${instructorId}`),
+  getProfile: () => apiClient.get('/instructors/profile'),
+  updateProfile: (instructorData) => apiClient.put('/instructors/profile', instructorData),
 }
 
-// Student API
+// Student API (FIXED - registration is now public)
 export const studentAPI = {
-  
+  // Public endpoints (no auth required)
   login: (credentials) => apiClient.post('/students/login', credentials),
+  createStudent: (studentData) => apiClient.post('/students', studentData), // Now public
   
+  // Alternative registration endpoint (if your backend uses this)
+  register: (studentData) => apiClient.post('/students/register', studentData),
   
-  createStudent: (studentData) => apiClient.post('/students', studentData),
+  // Protected endpoints (require auth)
   getAllStudents: (params = {}) => {
     const { page = 1, limit = 10, status, academicLevel, search } = params
     return apiClient.get('/students', { params: { page, limit, status, academicLevel, search } })
@@ -98,12 +125,11 @@ export const studentAPI = {
     const { query, status, academicLevel } = params
     return apiClient.get('/students/search', { params: { query, status, academicLevel } })
   },
-
   getProfile: () => apiClient.get('/students/profile'),
   updateProfile: (studentData) => apiClient.put('/students/profile', studentData),
 }
 
-// User API (referenced in the export but missing in original)
+// User API
 export const userAPI = {
   getAllUsers: () => apiClient.get('/users'),
   getUser: (userId) => apiClient.get(`/users/${userId}`),
@@ -125,7 +151,7 @@ export const enrollmentAPI = {
   deleteEnrollment: (enrollmentId) => apiClient.delete(`/enrollments/${enrollmentId}`),
 }
 
-// Product API (referenced in the export but missing in original)
+// Product API
 export const productAPI = {
   getAllProducts: () => apiClient.get('/products'),
   getProduct: (productId) => apiClient.get(`/products/${productId}`),
@@ -143,8 +169,6 @@ export const analyticsAPI = {
   getEnrollmentTrends: () => apiClient.get('/analytics/enrollment-trends'),
   getRevenueAnalytics: () => apiClient.get('/analytics/revenue'),
 }
-
-
 
 // File Upload API
 export const uploadAPI = {

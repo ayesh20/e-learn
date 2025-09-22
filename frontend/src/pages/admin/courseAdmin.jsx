@@ -191,11 +191,7 @@ export default function CoursesAdmin() {
         <div className="no-courses">
           <h3>No courses found</h3>
           <p>{searchTerm ? 'No courses match your search criteria.' : 'Get started by adding your first course!'}</p>
-          {!searchTerm && (
-            <Link to="/admin/courses/add" className="add-product-btn" style={{ textDecoration: 'none', display: 'inline-block', marginTop: '15px' }}>
-              Add First Course
-            </Link>
-          )}
+          
         </div>
       ) : (
         <table className="product-table">
@@ -296,10 +292,6 @@ export default function CoursesAdmin() {
         </table>
       )}
 
-      {/* Floating Add Button */}
-      <Link to="/admin/courses/add" className="fab" title="Add New Course">
-        +
-      </Link>
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from "react-hot-toast";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { studentAPI, instructorAPI } from '../../services/api'; // Import your API functions
 import styles from './Login.module.css';
@@ -53,18 +54,30 @@ export default function Login() {
             const credentials = { email, password };
             let response = null;
             let userType = null;
+            let loginError = null;
+
+            console.log('Login attempt for email:', email);
 
             // Try student login first
             try {
+                console.log('Trying student login...');
                 response = await studentAPI.login(credentials);
                 userType = 'student';
+                console.log('Student login successful:', response);
             } catch (studentError) {
+                console.log('Student login failed:', studentError.message);
+                loginError = studentError;
+                
                 // If student login fails, try instructor login
                 try {
+                    console.log('Trying instructor login...');
                     response = await instructorAPI.loginInstructor(credentials);
                     userType = 'instructor';
+                    console.log('Instructor login successful:', response);
                 } catch (instructorError) {
-                    throw new Error('Invalid email or password');
+                    console.log('Instructor login failed:', instructorError.message);
+                    // Both logins failed
+                    throw new Error('Invalid email or password. Please check your credentials.');
                 }
             }
 
@@ -85,7 +98,7 @@ export default function Login() {
                     localStorage.removeItem('lastEmail');
                 }
 
-                console.log('Login successful:', response);
+                toast.success(`Welcome! Logged in as ${userType}`);
 
                 // Navigate based on user type
                 if (userType === 'student') {
@@ -93,9 +106,12 @@ export default function Login() {
                 } else {
                     navigate('/InstructorDashboard');
                 }
+            } else {
+                throw new Error('Login failed - no token received');
             }
         } catch (error) {
-            console.error('Login failed:', error);
+            console.error('Login error:', error);
+            toast.error(error.message || 'Login failed');
             setError(error.message || 'Login failed. Please try again.');
         } finally {
             setLoading(false);

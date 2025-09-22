@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { userAPI, enrollmentAPI } from '../../services/api'
+import { studentAPI, enrollmentAPI } from '../../services/api'
 import './admin.css'
 
 export default function StudentsAdmin() {
@@ -17,21 +17,41 @@ export default function StudentsAdmin() {
   const fetchStudents = async () => {
     try {
       setLoading(true)
-      // Fetch all users and filter for students
-      const users = await userAPI.getAllUsers()
-      const studentUsers = users.filter(user => user.role === 'student' || user.role === 'user')
+      
+      // Use studentAPI instead of userAPI
+      const response = await studentAPI.getAllStudents()
+      
+      // Log the response to debug the structure
+      console.log('Students API Response:', response)
+      
+      // Handle different response formats
+      let studentsData = response
+      if (response && response.students) {
+        studentsData = response.students
+      } else if (response && response.data) {
+        studentsData = response.data
+      }
+      
+      // Ensure data is an array
+      if (!Array.isArray(studentsData)) {
+        console.error('API did not return an array:', studentsData)
+        setStudents([])
+        setError('Invalid data format received from server')
+        return
+      }
       
       // Fetch enrollments for each student
       const studentsWithEnrollments = await Promise.all(
-        studentUsers.map(async (student) => {
+        studentsData.map(async (student) => {
           try {
             const enrollments = await enrollmentAPI.getEnrollmentsByStudent(student._id)
             return {
               ...student,
-              enrollmentsCount: enrollments.length,
-              enrollments: enrollments
+              enrollmentsCount: enrollments?.length || 0,
+              enrollments: enrollments || []
             }
           } catch (err) {
+            console.error(`Error fetching enrollments for student ${student._id}:`, err)
             return {
               ...student,
               enrollmentsCount: 0,
@@ -46,6 +66,7 @@ export default function StudentsAdmin() {
     } catch (err) {
       setError('Failed to fetch students: ' + err.message)
       console.error('Error fetching students:', err)
+      setStudents([]) // Set empty array on error
     } finally {
       setLoading(false)
     }
@@ -54,7 +75,8 @@ export default function StudentsAdmin() {
   const handleDeleteStudent = async (studentId) => {
     if (window.confirm('Are you sure you want to delete this student? This will also remove all their enrollments.')) {
       try {
-        await userAPI.deleteUser(studentId)
+        // Use studentAPI.deleteStudent instead of userAPI.deleteUser
+        await studentAPI.deleteStudent(studentId)
         fetchStudents()
         alert('Student deleted successfully!')
       } catch (err) {
@@ -64,17 +86,7 @@ export default function StudentsAdmin() {
     }
   }
 
-  const handleToggleStudentStatus = async (studentId, currentStatus) => {
-    try {
-      const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
-      await userAPI.updateUser(studentId, { status: newStatus })
-      fetchStudents()
-      alert(`Student ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`)
-    } catch (err) {
-      alert('Failed to update student status: ' + err.message)
-      console.error('Error updating student status:', err)
-    }
-  }
+  
 
   const filteredStudents = students.filter(student =>
     student.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -183,7 +195,8 @@ export default function StudentsAdmin() {
                 <td className="email">{student.email}</td>
                 <td className="phone">{student.phone || 'N/A'}</td>
                 <td>
-                  {student.createdAt ? new Date(student.createdAt).toLocaleDateString() : 'N/A'}
+                  {student.createdAt ? new Date(student.createdAt).toLocaleDateString() : 
+                   student.enrollmentDate ? new Date(student.enrollmentDate).toLocaleDateString() : 'N/A'}
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <span style={{ 
@@ -203,28 +216,7 @@ export default function StudentsAdmin() {
                   </span>
                 </td>
                 <td className="actions">
-                  <button 
-                    className="action-btn view-btn"
-                    onClick={() => navigate(`/admin/students/view/${student._id}`)}
-                    title="View Student Profile"
-                  >
-                    👁️
-                  </button>
-                  <button 
-                    className="action-btn update-btn"
-                    onClick={() => navigate(`/admin/students/enrollments/${student._id}`)}
-                    title="View Enrollments"
-                  >
-                    📚
-                  </button>
-                  <button 
-                    className={`action-btn ${student.status === 'inactive' ? 'add-product-btn' : 'cancel-btn'}`}
-                    onClick={() => handleToggleStudentStatus(student._id, student.status)}
-                    title={student.status === 'inactive' ? 'Activate Student' : 'Deactivate Student'}
-                    style={{ fontSize: '12px', padding: '6px 8px' }}
-                  >
-                    {student.status === 'inactive' ? '▶️' : '⏸️'}
-                  </button>
+                 
                   <button 
                     className="action-btn delete-btn"
                     onClick={() => handleDeleteStudent(student._id)}

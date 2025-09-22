@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { courseAPI, userAPI, instructorAPI, enrollmentAPI } from '../../services/api'
+import { courseAPI, studentAPI, instructorAPI, enrollmentAPI } from '../../services/api'
 import './admin.css'
 
 export default function Dashboard() {
@@ -32,16 +32,28 @@ export default function Dashboard() {
       
       // Fetch all data in parallel
       const [courses, students, instructors, enrollments] = await Promise.all([
-        courseAPI.getAllCourses().catch(() => []),
-        userAPI.getAllUsers().catch(() => []),
-        instructorAPI.getAllInstructors().catch(() => []),
-        enrollmentAPI.getAllEnrollments().catch(() => [])
+        courseAPI.getAllCourses().catch((err) => {
+          console.error('Error fetching courses:', err)
+          return []
+        }),
+        studentAPI.getAllStudents().catch((err) => {
+          console.error('Error fetching students:', err)
+          return []
+        }),
+        instructorAPI.getAllInstructors().catch((err) => {
+          console.error('Error fetching instructors:', err)
+          return []
+        }),
+        enrollmentAPI.getAllEnrollments().catch((err) => {
+          console.error('Error fetching enrollments:', err)
+          return []
+        })
       ])
 
       // Log the responses to debug the structure
       console.log('Dashboard API Responses:', { courses, students, instructors, enrollments })
 
-      // Handle different response formats
+      // Handle different response formats for courses
       let coursesData = courses
       if (courses && courses.courses) {
         coursesData = courses.courses
@@ -49,13 +61,17 @@ export default function Dashboard() {
         coursesData = courses.data
       }
 
+      // Handle different response formats for students
       let studentsData = students
-      if (students && students.users) {
+      if (students && students.students) {
+        studentsData = students.students
+      } else if (students && students.users) {
         studentsData = students.users
       } else if (students && students.data) {
         studentsData = students.data
       }
 
+      // Handle different response formats for instructors
       let instructorsData = instructors
       if (instructors && instructors.instructors) {
         instructorsData = instructors.instructors
@@ -63,6 +79,7 @@ export default function Dashboard() {
         instructorsData = instructors.data
       }
 
+      // Handle different response formats for enrollments
       let enrollmentsData = enrollments
       if (enrollments && enrollments.enrollments) {
         enrollmentsData = enrollments.enrollments
@@ -76,38 +93,61 @@ export default function Dashboard() {
       if (!Array.isArray(instructorsData)) instructorsData = []
       if (!Array.isArray(enrollmentsData)) enrollmentsData = []
 
-      // Calculate stats
-      const studentUsers = studentsData.filter(user => user.role === 'student' || user.role === 'user')
-      const activeCourses = coursesData.filter(course => course.status === 'active' || course.status !== 'inactive')
+      console.log('Processed data arrays:', {
+        coursesCount: coursesData.length,
+        studentsCount: studentsData.length,
+        instructorsCount: instructorsData.length,
+        enrollmentsCount: enrollmentsData.length
+      })
+
+      // Calculate stats - REMOVED the role filtering since students come from studentAPI
+      // All students from studentAPI are actual students, no need to filter by role
+      const activeCourses = coursesData.filter(course => 
+        course.status === 'active' || course.status !== 'inactive'
+      )
       
       // Get recent enrollments (last 30 days)
       const thirtyDaysAgo = new Date()
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-      const recentEnrollments = enrollmentsData.filter(enrollment => 
-        new Date(enrollment.enrollmentDate || enrollment.createdAt) > thirtyDaysAgo
-      )
+      const recentEnrollments = enrollmentsData.filter(enrollment => {
+        const enrollmentDate = enrollment.enrollmentDate || enrollment.createdAt
+        return enrollmentDate && new Date(enrollmentDate) > thirtyDaysAgo
+      })
 
       // Generate recent activity
-      const activity = [
-        ...recentEnrollments.slice(0, 3).map(enrollment => ({
+      const activity = []
+      
+      // Add recent enrollments to activity
+      recentEnrollments.slice(0, 3).forEach(enrollment => {
+        activity.push({
           id: enrollment._id,
           type: 'enrollment',
           message: `New enrollment in ${enrollment.courseName || 'course'}`,
           time: enrollment.enrollmentDate || enrollment.createdAt,
           icon: '📚'
-        })),
-        ...coursesData.slice(-2).map(course => ({
+        })
+      })
+      
+      // Add recent courses to activity
+      coursesData.slice(-2).forEach(course => {
+        activity.push({
           id: course._id,
           type: 'course',
-          message: `Course "${course.name}" ${course.status === 'active' ? 'activated' : 'added'}`,
+          message: `Course "${course.name || course.title}" ${course.status === 'active' ? 'activated' : 'added'}`,
           time: course.createdAt || course.updatedAt,
           icon: '🎓'
-        }))
-      ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5)
+        })
+      })
+
+      // Sort activity by time and take top 5
+      const sortedActivity = activity
+        .filter(item => item.time) // Only include items with valid timestamps
+        .sort((a, b) => new Date(b.time) - new Date(a.time))
+        .slice(0, 5)
 
       setStats({
         totalCourses: coursesData.length,
-        totalStudents: studentUsers.length,
+        totalStudents: studentsData.length, // Direct count, no role filtering
         totalInstructors: instructorsData.length,
         totalEnrollments: enrollmentsData.length,
         activeCourses: activeCourses.length,
@@ -117,7 +157,7 @@ export default function Dashboard() {
         systemStatus: 'Online'
       })
 
-      setRecentActivity(activity)
+      setRecentActivity(sortedActivity)
       
     } catch (err) {
       setError('Failed to fetch dashboard statistics: ' + err.message)
@@ -184,7 +224,7 @@ export default function Dashboard() {
           <div className="stat-label">{stats.activeCourses} active courses</div>
         </div>
         
-        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => handleNavigateToSection('/admin/users')}>
+        <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => handleNavigateToSection('/admin/students')}>
           <h3>Total Students</h3>
           <div className="stat-number">{stats.totalStudents}</div>
           <div className="stat-label">Registered users</div>
@@ -333,10 +373,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Floating Action Button */}
-      <Link to="/admin/courses/add" className="fab" title="Quick Add Course">
-        +
-      </Link>
+      
     </div>
   )
 }
