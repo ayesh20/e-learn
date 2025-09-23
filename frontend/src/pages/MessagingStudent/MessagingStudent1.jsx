@@ -1,6 +1,7 @@
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../../components/Navbar/Navbar.jsx';
-import Footer from '../../components/Footer/Footer.jsx';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar/Navbar.jsx";
+import Footer from "../../components/Footer/Footer.jsx";
 
 import styles from "./MessagingStudent1.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,37 +17,60 @@ const students = [
 ];
 
 export default function MessagingStudent1() {
+  const navigate = useNavigate();
+
+  const handleChat = (student) => {
+    // Navigate to messaginginstructor2 and pass the student data
+    navigate("/messaginginstructor2", { state: { student } });
+  };
+
+  const handleAdd = () => {
+    // Navigate to MessagingInstructor1
+    navigate("/messaginginstructor1");
+  };
+
   return (
+    <>
+      <Navbar />
+      <div className={styles.container}>
+        {/* Header with add button */}
+        <div className={styles.header}>
+          <FontAwesomeIcon
+            icon={faPlus}
+            className={styles.addIcon}
+            onClick={handleAdd} // navigate on click
+            style={{ cursor: "pointer" }}
+          />
+        </div>
 
-    <><Navbar />
-    <div className={styles.container}>
-      {/* Header with add button */}
-      <div className={styles.header}>
-        <FontAwesomeIcon icon={faPlus} className={styles.addIcon} />
-      </div>
+        {/* Student list */}
+        <div className={styles.list}>
+          {students.map((student) => (
+            <div
+              key={student.id}
+              className={styles.listItem}
+              onClick={() => handleChat(student)} // navigate on click
+              style={{ cursor: "pointer" }}
+            >
+              <div className={styles.left}>
+                <img src={student.img} alt={student.name} className={styles.avatar} />
+                <div className={styles.info}>
+                  <span className={styles.name}>{student.name}</span>
+                  <FontAwesomeIcon icon={faCheckDouble} className={styles.checkIcon} />
+                </div>
+              </div>
 
-      {/* Student list */}
-      <div className={styles.list}>
-        {students.map((student) => (
-          <div key={student.id} className={styles.listItem}>
-            <div className={styles.left}>
-              <img src={student.img} alt={student.name} className={styles.avatar} />
-              <div className={styles.info}>
-                <span className={styles.name}>{student.name}</span>
-                <FontAwesomeIcon icon={faCheckDouble} className={styles.checkIcon} />
+              <button className={styles.courseBtn}>Course name</button>
+
+              <div className={styles.right}>
+                <span className={styles.date}>{student.date}</span>
+                <FontAwesomeIcon icon={faChevronRight} className={styles.chevron} />
               </div>
             </div>
-
-            <button className={styles.courseBtn}>Course name</button>
-
-            <div className={styles.right}>
-              <span className={styles.date}>{student.date}</span>
-              <FontAwesomeIcon icon={faChevronRight} className={styles.chevron} />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
-    <Footer /></>
+      <Footer />
+    </>
   );
 }
