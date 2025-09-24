@@ -169,6 +169,27 @@ export const analyticsAPI = {
   getEnrollmentTrends: () => apiClient.get('/analytics/enrollment-trends'),
   getRevenueAnalytics: () => apiClient.get('/analytics/revenue'),
 }
+// Profile API
+export const profileAPI = {
+  getProfile: () => apiClient.get('/profile'),
+  updateProfile: (profileData) => apiClient.put('/profile', profileData),
+  uploadProfileImage: (imageFile, onUploadProgress = null) => {
+    const formData = new FormData();
+    formData.append('profileImage', imageFile);
+    
+    const config = {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    };
+    
+    if (onUploadProgress) {
+      config.onUploadProgress = onUploadProgress;
+    }
+    
+    return apiClient.post('/profile/image', formData, config);
+  },
+  getProfileImage: (filename) => apiClient.get(`/profile/image/${filename}`),
+  deleteProfile: () => apiClient.delete('/profile'),
+}
 
 // File Upload API
 export const uploadAPI = {

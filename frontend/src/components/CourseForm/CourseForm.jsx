@@ -51,7 +51,12 @@ const CourseForm = () => {
             <textarea placeholder="Shortly describe your course details"></textarea>
             <input type="text" placeholder="Price" />
             <select>
-              <option>Category</option>
+              <option> All Category</option>
+              <option value="Business">Business</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Web">Web</option>
+                  <option value="Design">Design</option>
+                  <option value="Literature">Literature</option>
             </select>
          
           </form>
@@ -65,22 +70,7 @@ const CourseForm = () => {
           </div>
         </div>
 
-        {/* Right preview */}
-        <div className={styles.right}>
-          <div className={styles.previewCard}>
-            {preview ? (
-              <img src={preview} alt="Preview" />
-            ) : (
-              <img
-                src="https://via.placeholder.com/200x150.png?text=Preview"
-                alt="Preview"
-              />
-            )}
-            <p>
-              All Benefits of PLUS <span>$24</span>
-            </p>
-          </div>
-        </div>
+        
       </div>
     </div>
   );
