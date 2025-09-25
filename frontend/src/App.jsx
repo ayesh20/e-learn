@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx"; // Ensure path is correct
+
 import Login from "./pages/Login/Login.jsx";
 import Register from "./pages/Signup/Signup.jsx";
 import HomePage from "./pages/Home/HomePage.jsx";
@@ -25,44 +27,170 @@ import QuizInstructor from "./pages/quizInstructor/quizInstructor.jsx";
 import Courses from "./pages/Courses/Courses.jsx";
 import MyCourses from "./pages/MyCourses/MyCourses.jsx";
 
+// PrivateRoute wrapper
+function PrivateRoute({ children }) {
+  const { currentUser, loading } = useAuth();
 
+  if (loading) return <div>Loading...</div>;
+  if (!currentUser) return <Navigate to="/" />;
 
-
+  return children;
+}
 
 function App() {
   return (
-    <BrowserRouter>
-   
+    <AuthProvider>
+      <BrowserRouter>
         <Routes>
-         <Route path="/"  element={<Login/>}/>
-          <Route path="/Home" element={<HomePage/>} />
-          <Route path="/register" element={<Register/>} />
-          <Route path="/course-details" element={<CourseDetails/>} />
+          {/* Public routes */}
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/OTPVerification" element={<OTPVerification />} />
           <Route path="/ResetConfirm" element={<ResetConfirm />} />
           <Route path="/SetNewPassword" element={<SetNewPassword />} />
           <Route path="/SuccessfulReset" element={<SuccessfulReset />} />
-          <Route path="/InstructorDashboard" element={<InstructorDashboard />} />
-          <Route path="/LectureOverview" element={<LectureOverview />} />
-          <Route path="/courses" element={<Courses/>} />
-          <Route path="/mycourses" element={<MyCourses/>}/>
-         <Route path="/profileedit"  element={<ProfileEdit/>}/>
-         <Route path="/aboutus"  element={<Aboutus/>}/>
-         <Route path="/contactus"  element={<Contactus/>}/>
-         <Route path="/messaginginstructor1"  element={<MessagingInstructor1/>}/>
-         <Route path="/messaginginstructor2"  element={<MessagingInstructor2/>}/>
-         <Route path="/messagingstudent1"  element={<MessagingStudent1/>}/>
-         <Route path="/messagingstudent2"  element={<MessagingStudent2/>}/>
-         <Route path="/courseoverview"  element={<CourseOverview/>}/>
-          <Route path="/admin/*" element={<AdminLayout/>}/>
-          <Route path="/quizstudent" element={<QuizStudent/>}/>
-          <Route path="/quizinstructor" element={<QuizInstructor/>}/>
 
-          
+          {/* Protected routes */}
+          <Route
+            path="/Home"
+            element={
+              <PrivateRoute>
+                <HomePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/InstructorDashboard"
+            element={
+              <PrivateRoute>
+                <InstructorDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messaginginstructor1"
+            element={
+              <PrivateRoute>
+                <MessagingInstructor1 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messaginginstructor2"
+            element={
+              <PrivateRoute>
+                <MessagingInstructor2 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messagingstudent1"
+            element={
+              <PrivateRoute>
+                <MessagingStudent1 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messagingstudent2"
+            element={
+              <PrivateRoute>
+                <MessagingStudent2 />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/course-details"
+            element={
+              <PrivateRoute>
+                <CourseDetails />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/LectureOverview"
+            element={
+              <PrivateRoute>
+                <LectureOverview />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/courses"
+            element={
+              <PrivateRoute>
+                <Courses />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/mycourses"
+            element={
+              <PrivateRoute>
+                <MyCourses />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profileedit"
+            element={
+              <PrivateRoute>
+                <ProfileEdit />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/aboutus"
+            element={
+              <PrivateRoute>
+                <Aboutus />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/contactus"
+            element={
+              <PrivateRoute>
+                <Contactus />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/courseoverview"
+            element={
+              <PrivateRoute>
+                <CourseOverview />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <PrivateRoute>
+                <AdminLayout />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/quizstudent"
+            element={
+              <PrivateRoute>
+                <QuizStudent />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/quizinstructor"
+            element={
+              <PrivateRoute>
+                <QuizInstructor />
+              </PrivateRoute>
+            }
+          />
         </Routes>
-     
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

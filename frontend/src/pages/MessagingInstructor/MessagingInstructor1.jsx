@@ -1,103 +1,128 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
 import styles from "./MessagingInstructor1.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-
-const initialData = [
-  { id: 1, name: "Andrew Parker", img: "https://i.pravatar.cc/100?img=1", course: "React Basics" },
-  { id: 2, name: "Samantha Lee", img: "https://i.pravatar.cc/100?img=2", course: "JavaScript Essentials" },
-  { id: 3, name: "Karen Castillo", img: "https://i.pravatar.cc/100?img=3", course: "Python Fundamentals" },
-  { id: 4, name: "Michael Scott", img: "https://i.pravatar.cc/100?img=4", course: "UI/UX Design" },
-  { id: 5, name: "Linda Johnson", img: "https://i.pravatar.cc/100?img=5", course: "Node.js Basics" },
-  { id: 6, name: "Andrew Parker", img: "https://i.pravatar.cc/100?img=6", course: "CSS Advanced" },
-  { id: 7, name: "Karen Castillo", img: "https://i.pravatar.cc/100?img=7", course: "TypeScript Intro" },
-];
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function MessagingInstructor1() {
   const navigate = useNavigate();
+  const { currentUser, loading } = useAuth();
+  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
-  const [courseFilter, setCourseFilter] = useState("All Courses");
-  const [data] = useState(initialData);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [error, setError] = useState("");
 
-  // Extract unique course names for dropdown
-  const courseOptions = ["All Courses", ...new Set(data.map((d) => d.course))];
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!loading && !currentUser) navigate("/login");
+  }, [currentUser, loading, navigate]);
 
-  // Filter based on search + course
-  const filteredData = data.filter(
-    (item) =>
-      (item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.course.toLowerCase().includes(search.toLowerCase())) &&
-      (courseFilter === "All Courses" || item.course === courseFilter)
-  );
+  // Fetch opposite users
+  useEffect(() => {
+    if (!currentUser) return;
 
-  const handleStart = (course) => {
-    // Navigate to course page using course name
-    const courseSlug = course.toLowerCase().replace(/\s+/g, "-");
-    navigate(`/course/${courseSlug}`);
+    const fetchUsers = async () => {
+      try {
+        setLoadingUsers(true);
+        setError("");
+
+        const endpoint =
+          currentUser.role === "instructor"
+            ? "http://localhost:5000/api/students"
+            : "http://localhost:5000/api/instructors";
+
+        const res = await axios.get(endpoint);
+
+        // Extract array from API response correctly
+        const usersArray =
+          currentUser.role === "instructor"
+            ? res.data.students || []
+            : res.data.instructors || [];
+
+        setUsers(usersArray);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load users. Please try again later.");
+        setUsers([]);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+  }, [currentUser]);
+
+  // Filter users by search input
+  const filteredUsers = Array.isArray(users)
+    ? users.filter(
+        u =>
+          `${u.firstName || ""} ${u.lastName || ""}`
+            .toLowerCase()
+            .includes(search.toLowerCase())
+      )
+    : [];
+
+  // Navigate to chat page with the selected user
+  const handleChat = user => {
+    navigate("/messaginginstructor2", { state: { otherUser: user } });
   };
+
+  if (loading) return <div>Loading user...</div>;
+  if (!currentUser) return <div>Please log in first.</div>;
 
   return (
     <>
       <Navbar />
       <div className={styles.courseList}>
-        {/* Top Bar */}
         <div className={styles.topBar}>
-          <div className={styles.searchBox}>
-            <input
-              type="text"
-              placeholder="Search by name or course"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
-          </div>
+          <input
+            type="text"
+            placeholder={`Search ${
+              currentUser.role === "student" ? "instructors" : "students"
+            }`}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className={styles.searchBox}
+          />
+          <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+        </div>
 
-          {/* Course Filter Dropdown */}
-          <select
-            className={styles.dropdownBtn}
-            value={courseFilter}
-            onChange={(e) => setCourseFilter(e.target.value)}
-          >
-            {courseOptions.map((course) => (
-              <option key={course} value={course}>
-                {course}
-              </option>
+        {loadingUsers ? (
+          <div style={{ padding: "20px" }}>Loading users...</div>
+        ) : error ? (
+          <div style={{ padding: "20px", color: "red" }}>{error}</div>
+        ) : filteredUsers.length > 0 ? (
+          <div className={styles.list}>
+            {filteredUsers.map(u => (
+              <div key={u._id} className={styles.listItem}>
+                <img
+                  src={u.profileImage || "https://i.pravatar.cc/100"}
+                  alt={`${u.firstName} ${u.lastName}`}
+                  className={styles.avatar}
+                />
+                <div className={styles.userInfo}>
+                  <span className={styles.name}>
+                    {u.firstName} {u.lastName}
+                  </span>
+                </div>
+                <div className={styles.buttons}>
+                  <button
+                    className={styles.startBtn}
+                    onClick={() => handleChat(u)}
+                  >
+                    Chat
+                  </button>
+                </div>
+              </div>
             ))}
-          </select>
-        </div>
-
-        {/* List */}
-        <div className={styles.list}>
-          {filteredData.map((item) => (
-            <div key={item.id} className={styles.listItem}>
-              <img src={item.img} alt={item.name} className={styles.avatar} />
-              <div className={styles.userInfo}>
-                <span className={styles.name}>{item.name}</span>
-                <span className={styles.courseName}>{item.course}</span>
-              </div>
-              <div className={styles.buttons}>
-                <button
-                  className={styles.courseBtn}
-                  onClick={() => handleStart(item.course)}
-                >
-                  Go to Course
-                </button>
-                <button
-                  className={styles.startBtn}
-                  onClick={() => navigate(`/messaginginstructor2`)}
-                >
-                  Chat
-                </button>
-              </div>
-            </div>
-          ))}
-          {filteredData.length === 0 && (
-            <div className={styles.noResults}>No matching users found.</div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div style={{ padding: "20px" }}>No users found.</div>
+        )}
       </div>
       <Footer />
     </>
