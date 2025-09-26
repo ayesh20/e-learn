@@ -16,7 +16,8 @@ apiClient.interceptors.request.use(
     const publicEndpoints = [
       '/students/login',
       '/students/register',
-      '/instructors/login'
+      '/instructors/login',
+      '/instructors/register'
     ];
     
     // Check if this is a registration/login request
@@ -67,19 +68,178 @@ apiClient.interceptors.response.use(
   }
 )
 
-// Course API
+// Course API - Fixed to use apiClient consistently
 export const courseAPI = {
-  getAllCourses: () => apiClient.get('/courses'),
-  getCourse: (courseId) => apiClient.get(`/courses/${courseId}`),
-  createCourse: (courseData) => {
-    const config = courseData instanceof FormData ? {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    } : {}
-    return apiClient.post('/courses', courseData, config)
+  // Basic CRUD operations
+  createCourse: async (courseData) => {
+    try {
+      console.log('Creating course with JSON data:', courseData);
+      return await apiClient.post('/courses', courseData);
+    } catch (error) {
+      console.error('Error creating course:', error);
+      throw error;
+    }
   },
-  updateCourse: (courseId, courseData) => apiClient.put(`/courses/${courseId}`, courseData),
-  deleteCourse: (courseId) => apiClient.delete(`/courses/${courseId}`),
-}
+
+  // Create course with file upload (FormData)
+  createCourseWithFile: async (formData) => {
+    try {
+      console.log('Creating course with file upload');
+      return await apiClient.post('/courses', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+    } catch (error) {
+      console.error('Error creating course with file:', error);
+      throw error;
+    }
+  },
+
+  // Update course with basic data (JSON)
+  updateCourse: async (courseId, courseData) => {
+    try {
+      console.log('Updating course with JSON data:', courseId, courseData);
+      return await apiClient.put(`/courses/${courseId}`, courseData);
+    } catch (error) {
+      console.error('Error updating course:', error);
+      throw error;
+    }
+  },
+
+  // Update course with file upload (FormData)
+  updateCourseWithFile: async (courseId, formData) => {
+    try {
+      console.log('Updating course with file upload:', courseId);
+      return await apiClient.put(`/courses/${courseId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+    } catch (error) {
+      console.error('Error updating course with file:', error);
+      throw error;
+    }
+  },
+
+  // Get all courses
+  getAllCourses: async (params = {}) => {
+    try {
+      return await apiClient.get('/courses', { params });
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      throw error;
+    }
+  },
+
+  // Get course by ID
+  getCourseById: async (courseId) => {
+    try {
+      return await apiClient.get(`/courses/${courseId}`);
+    } catch (error) {
+      console.error('Error fetching course:', error);
+      throw error;
+    }
+  },
+
+  // Get courses by instructor
+  getCoursesByInstructor: async (instructorId) => {
+    try {
+      console.log('Fetching courses for instructor:', instructorId);
+      return await apiClient.get(`/courses/instructor/${instructorId}`);
+    } catch (error) {
+      console.error('Error fetching instructor courses:', error);
+      throw error;
+    }
+  },
+
+  // Delete course
+  deleteCourse: async (courseId) => {
+    try {
+      return await apiClient.delete(`/courses/${courseId}`);
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      throw error;
+    }
+  },
+
+  // Update course status
+  updateCourseStatus: async (courseId, status) => {
+    try {
+      return await apiClient.patch(`/courses/${courseId}/status`, { status });
+    } catch (error) {
+      console.error('Error updating course status:', error);
+      throw error;
+    }
+  },
+
+  // Update course content specifically
+  updateCourseContent: async (courseId, content) => {
+    try {
+      console.log('Updating course content:', courseId);
+      return await apiClient.put(`/courses/${courseId}/content`, { content });
+    } catch (error) {
+      console.error('Error updating course content:', error);
+      throw error;
+    }
+  },
+
+  // Update course quizzes specifically
+  updateCourseQuizzes: async (courseId, quizzes) => {
+    try {
+      console.log('Updating course quizzes:', courseId);
+      return await apiClient.put(`/courses/${courseId}/quizzes`, { quizzes });
+    } catch (error) {
+      console.error('Error updating course quizzes:', error);
+      throw error;
+    }
+  },
+
+  // Get course content
+  getCourseContent: async (courseId) => {
+    try {
+      return await apiClient.get(`/courses/${courseId}/content`);
+    } catch (error) {
+      console.error('Error fetching course content:', error);
+      throw error;
+    }
+  },
+
+  // Get course quizzes
+  getCourseQuizzes: async (courseId) => {
+    try {
+      return await apiClient.get(`/courses/${courseId}/quiz-data`);
+    } catch (error) {
+      console.error('Error fetching course quizzes:', error);
+      throw error;
+    }
+  },
+
+  // Legacy methods for backward compatibility
+  addCourseContent: async (courseId, contentData) => {
+    try {
+      return await apiClient.post(`/courses/${courseId}/content`, contentData);
+    } catch (error) {
+      console.error('Error adding course content:', error);
+      throw error;
+    }
+  },
+
+  addCourseQuiz: async (courseId, quizData) => {
+    try {
+      return await apiClient.post(`/courses/${courseId}/quiz`, quizData);
+    } catch (error) {
+      console.error('Error adding course quiz:', error);
+      throw error;
+    }
+  },
+
+  // Get courses by category
+  getCoursesByCategory: async (category) => {
+    try {
+      return await apiClient.get(`/courses/category/${category}`);
+    } catch (error) {
+      console.error('Error fetching courses by category:', error);
+      throw error;
+    }
+  },
+};
 
 // Instructor API
 export const instructorAPI = {
@@ -94,18 +254,51 @@ export const instructorAPI = {
   
   // Protected endpoints (require auth)
   getAllInstructors: () => apiClient.get('/instructors'),
-  getInstructor: (instructorId) => apiClient.get(`/instructors/${instructorId}`),
-  updateInstructor: (instructorId, instructorData) => apiClient.put(`/instructors/${instructorId}`, instructorData),
-  deleteInstructor: (instructorId) => apiClient.delete(`/instructors/${instructorId}`),
-  getProfile: () => apiClient.get('/instructors/profile'),
-  updateProfile: (instructorData) => apiClient.put('/instructors/profile', instructorData),
-}
+  getInstructor: (instructorId) => {
+    if (!instructorId) throw new Error('Instructor ID is required');
+    return apiClient.get(`/instructors/${instructorId}`);
+  },
+  updateInstructor: (instructorId, instructorData) => {
+    if (!instructorId) throw new Error('Instructor ID is required');
+    return apiClient.put(`/instructors/${instructorId}`, instructorData);
+  },
+  deleteInstructor: (instructorId) => {
+    if (!instructorId) throw new Error('Instructor ID is required');
+    return apiClient.delete(`/instructors/${instructorId}`);
+  },
+  
+  // Profile endpoints - handles both scenarios
+  getProfile: () => {
+    // Option 1: If your backend has a dedicated /profile endpoint
+    return apiClient.get('/instructors/me/profile');
+    
+  
+  },
+  
+  updateProfile: (instructorData) => {
+    // Option 1: If your backend has a dedicated /profile endpoint
+    return apiClient.put('/instructors/me/profile', instructorData);
+    
+    
+  },
+  
+  // Alternative methods if you have instructor ID available
+  getProfileById: (instructorId) => {
+    if (!instructorId) throw new Error('Instructor ID is required');
+    return apiClient.get(`/instructors/${instructorId}`);
+  },
+  
+  updateProfileById: (instructorId, instructorData) => {
+    if (!instructorId) throw new Error('Instructor ID is required');
+    return apiClient.put(`/instructors/${instructorId}`, instructorData);
+  }
+};
 
-// Student API (FIXED - registration is now public)
+// Student API
 export const studentAPI = {
   // Public endpoints (no auth required)
   login: (credentials) => apiClient.post('/students/login', credentials),
-  createStudent: (studentData) => apiClient.post('/students', studentData), // Now public
+  createStudent: (studentData) => apiClient.post('/students', studentData),
   
   // Alternative registration endpoint (if your backend uses this)
   register: (studentData) => apiClient.post('/students/register', studentData),
@@ -151,15 +344,6 @@ export const enrollmentAPI = {
   deleteEnrollment: (enrollmentId) => apiClient.delete(`/enrollments/${enrollmentId}`),
 }
 
-// Product API
-export const productAPI = {
-  getAllProducts: () => apiClient.get('/products'),
-  getProduct: (productId) => apiClient.get(`/products/${productId}`),
-  createProduct: (productData) => apiClient.post('/products', productData),
-  updateProduct: (productId, productData) => apiClient.put(`/products/${productId}`, productData),
-  deleteProduct: (productId) => apiClient.delete(`/products/${productId}`),
-}
-
 // Analytics API (for dashboard statistics)
 export const analyticsAPI = {
   getDashboardStats: () => apiClient.get('/analytics/dashboard'),
@@ -169,6 +353,7 @@ export const analyticsAPI = {
   getEnrollmentTrends: () => apiClient.get('/analytics/enrollment-trends'),
   getRevenueAnalytics: () => apiClient.get('/analytics/revenue'),
 }
+
 // Profile API
 export const profileAPI = {
   getProfile: () => apiClient.get('/profile'),
@@ -251,8 +436,8 @@ const api = {
   student: studentAPI,
   user: userAPI,
   enrollment: enrollmentAPI,
-  product: productAPI,
   analytics: analyticsAPI,
+  profile: profileAPI,
   upload: uploadAPI,
 }
 

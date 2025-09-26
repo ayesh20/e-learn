@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCourseContext } from "../../pages/LectureOverview/LectureOverview";
 import { courseAPI } from "../../services/api";
 import styles from "./QuizSection.module.css";
 
-const QuizSection = () => {
+const QuizSection = ({ courseId, onQuizSaved }) => {
   const navigate = useNavigate();
-  const { courseData, updateCourseData, setLoading, setError, setSuccess } = useCourseContext();
   
   const [quizzes, setQuizzes] = useState([{ id: 1, name: "Quiz 1", questions: {} }]);
   const [activeQuiz, setActiveQuiz] = useState(1);
   const [page, setPage] = useState(1);
   const [questions, setQuestions] = useState(Array.from({ length: 15 }, (_, i) => i + 1));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   
   // Current question data
   const [currentQuestion, setCurrentQuestion] = useState({
@@ -65,25 +66,25 @@ const QuizSection = () => {
     // Validate question data
     if (!currentQuestion.question.trim()) {
       setError('Question text is required');
-      return;
+      return false;
     }
     
     if (!currentQuestion.answer1.trim() || !currentQuestion.answer2.trim() || 
         !currentQuestion.answer3.trim() || !currentQuestion.answer4.trim()) {
       setError('All four answers are required');
-      return;
+      return false;
     }
     
     if (!currentQuestion.correctAnswer.trim()) {
       setError('Correct answer is required');
-      return;
+      return false;
     }
 
     // Check if correct answer matches one of the provided answers
     const answers = [currentQuestion.answer1, currentQuestion.answer2, currentQuestion.answer3, currentQuestion.answer4];
     if (!answers.includes(currentQuestion.correctAnswer)) {
       setError('Correct answer must match one of the provided answers');
-      return;
+      return false;
     }
 
     // Update quiz data
@@ -102,6 +103,7 @@ const QuizSection = () => {
 
     setError(null);
     console.log('Question saved successfully');
+    return true;
   };
 
   const resetCurrentQuestion = () => {
@@ -123,21 +125,27 @@ const QuizSection = () => {
   };
 
   const goToNext = () => {
-    saveCurrentQuestion();
-    if (page < questions.length) {
-      setPage(page + 1);
-    } else {
-      // Add new question if at the end
-      addQuestion();
+    if (saveCurrentQuestion()) {
+      if (page < questions.length) {
+        setPage(page + 1);
+      } else {
+        // Add new question if at the end
+        addQuestion();
+      }
     }
   };
 
   const saveAllQuizzes = async () => {
     try {
+      if (!courseId) {
+        setError('Please save course basic information first');
+        return;
+      }
+
       setLoading(true);
       
       // Save current question first
-      saveCurrentQuestion();
+      if (!saveCurrentQuestion()) return;
       
       // Prepare quiz data for storage
       const quizData = quizzes.map(quiz => ({
@@ -157,21 +165,22 @@ const QuizSection = () => {
         })).filter(q => q.question.trim() !== '') // Only include questions with content
       })).filter(quiz => quiz.questions.length > 0); // Only include quizzes with questions
 
-      // Update course context
-      updateCourseData({ quizzes: quizData });
-
       // If course exists, update it on server
-      if (courseData.courseId) {
+      if (courseId) {
         // Note: You may need to extend your course model to include quizzes
         // For now, we'll store it as additional data
-        await courseAPI.updateCourse(courseData.courseId, {
+        await courseAPI.updateCourse(courseId, {
           quizzes: quizData,
           // You might want to add this to your course schema
           additionalData: {
-            ...courseData.additionalData,
             quizzes: quizData
           }
         });
+      }
+
+      // Call the callback with saved quiz data
+      if (onQuizSaved) {
+        onQuizSaved(quizData);
       }
 
       setSuccess(true);
@@ -196,8 +205,7 @@ const QuizSection = () => {
   const exportQuizData = () => {
     // Export current quiz data as JSON for backup
     const dataToExport = {
-      courseId: courseData.courseId,
-      courseTitle: courseData.title,
+      courseId: courseId,
       quizzes: quizzes,
       exportDate: new Date().toISOString()
     };
@@ -208,7 +216,7 @@ const QuizSection = () => {
     
     const link = document.createElement('a');
     link.href = url;
-    link.download = `quiz-data-${courseData.title || 'course'}.json`;
+    link.download = `quiz-data-course-${courseId}.json`;
     link.click();
     
     URL.revokeObjectURL(url);
@@ -216,13 +224,37 @@ const QuizSection = () => {
 
   return (
     <div className={styles.quiz}>
+      {/* Error/Success Messages */}
+      {error && (
+        <div className={styles.errorMessage}>
+          <p>Error: {error}</p>
+          <button onClick={() => setError(null)}>×</button>
+        </div>
+      )}
+
+      {success && (
+        <div className={styles.successMessage}>
+          <p>Quizzes saved successfully!</p>
+          <button onClick={() => setSuccess(false)}>×</button>
+        </div>
+      )}
+
+      {loading && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.spinner}>Saving quizzes...</div>
+        </div>
+      )}
+
       <div className={styles.quizHeader}>
         <h3>Add Quiz</h3>
         <div className={styles.quizActions}>
-          <button className={styles.exportBtn} onClick={exportQuizData}>
+          <span className={styles.courseInfo}>
+            {courseId ? `Course ID: ${courseId}` : 'Save basic info first'}
+          </span>
+          <button className={styles.exportBtn} onClick={exportQuizData} disabled={!courseId}>
             Export Quiz Data
           </button>
-          <button className={styles.saveAllBtn} onClick={saveAllQuizzes}>
+          <button className={styles.saveAllBtn} onClick={saveAllQuizzes} disabled={!courseId || loading}>
             Save All Quizzes
           </button>
         </div>
@@ -253,8 +285,9 @@ const QuizSection = () => {
                 quizzes.find(q => q.id === activeQuiz)?.questions[num] ? styles.hasContent : ''
               }`}
               onClick={() => {
-                saveCurrentQuestion();
-                setPage(num);
+                if (saveCurrentQuestion()) {
+                  setPage(num);
+                }
               }}
             >
               {num}
@@ -366,7 +399,7 @@ const QuizSection = () => {
       </div>
 
       <div className={styles.finalActions}>
-        <button className={styles.bigSave} onClick={handleSaveAll}>
+        <button className={styles.bigSave} onClick={handleSaveAll} disabled={!courseId || loading}>
           Save All & Return to Dashboard
         </button>
       </div>

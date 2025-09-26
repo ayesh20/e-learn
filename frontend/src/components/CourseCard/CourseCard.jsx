@@ -22,9 +22,7 @@ const CourseCard = ({ id, title, description, benefits, price, imageUrl, onDelet
 
         {/* Update + Delete Overlay */}
         <div className={styles.overlay}>
-          <button className={styles.updateBtn} onClick={handleUpdate}>
-            Update
-          </button>
+          
           <div className={styles.deleteIcon} onClick={() => onDelete(id)}>
             <FaTrashAlt />
           </div>

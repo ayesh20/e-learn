@@ -1,0 +1,534 @@
+/* Updated Checkout.module.css */
+
+.checkoutPage {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding: 40px 0;
+}
+
+.checkoutContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Payment Section */
+.paymentSection {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.paymentSection h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 24px 0;
+}
+
+/* Student Information */
+.studentInfo {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.studentInfo h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 16px 0;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.infoItem label {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.infoItem span {
+  font-weight: 600;
+  color: #1f2937;
+  text-align: right;
+}
+
+/* Payment Methods */
+.cartType {
+  margin-bottom: 24px;
+}
+
+.cartType p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 12px 0;
+}
+
+.paymentMethods {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.paymentIcon {
+  height: 32px;
+  width: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+.paymentIcon:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.1);
+}
+
+/* Form Styles */
+.checkoutForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.formGroup input {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.formGroup input:hover {
+  border-color: #cbd5e1;
+}
+
+.errorInput {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.errorMessage {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.errorMessage p {
+  margin: 0 0 4px 0;
+}
+
+.errorMessage p:last-child {
+  margin-bottom: 0;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 16px;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxGroup input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+}
+
+.checkboxGroup label {
+  color: #6b7280;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Submit Button */
+.confirmBtn {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.confirmBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+}
+
+.confirmBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.processingText {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Summary Section */
+.summarySection {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  position: sticky;
+  top: 20px;
+}
+
+.summarySection h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 20px 0;
+}
+
+.orderItem {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.courseImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.itemDetails {
+  flex: 1;
+}
+
+.itemDetails h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.courseCategory {
+  color: #3b82f6;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0 0 2px 0;
+}
+
+.courseInstructor {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 0 0 8px 0;
+}
+
+.courseFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.courseFeatures span {
+  font-size: 0.75rem;
+  color: #059669;
+  font-weight: 500;
+}
+
+.price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+/* Summary Details */
+.summaryDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.totalRow {
+  padding-top: 12px;
+  border-top: 2px solid #e5e7eb;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.totalAmount {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 2px;
+}
+
+.totalPrice {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.taxInfo {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Security Information */
+.securityInfo {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.securityItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.securityIcon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .checkoutContainer {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .summarySection {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkoutPage {
+    padding: 20px 0;
+  }
+  
+  .checkoutContainer {
+    padding: 0 16px;
+    gap: 24px;
+  }
+  
+  .paymentSection,
+  .summarySection {
+    padding: 24px;
+  }
+  
+  .paymentSection h2 {
+    font-size: 1.75rem;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr 100px;
+    gap: 12px;
+  }
+  
+  .orderItem {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .courseImage {
+    width: 120px;
+    height: 120px;
+    align-self: center;
+  }
+  
+  .paymentMethods {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkoutContainer {
+    padding: 0 12px;
+  }
+  
+  .paymentSection,
+  .summarySection {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .paymentSection h2 {
+    font-size: 1.5rem;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .studentInfo {
+    padding: 16px;
+  }
+  
+  .infoItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .infoItem span {
+    text-align: left;
+  }
+  
+  .confirmBtn {
+    padding: 14px;
+    font-size: 1rem;
+  }
+  
+  .orderItem {
+    gap: 12px;
+  }
+  
+  .courseImage {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .itemDetails h4 {
+    font-size: 0.9rem;
+  }
+  
+  .securityInfo {
+    padding: 12px;
+  }
+  
+  .securityItem {
+    font-size: 0.8rem;
+  }
+}
+
+/* Additional Enhancements */
+.checkoutForm input::placeholder {
+  color: #9ca3af;
+}
+
+.checkoutForm input[type="text"]:invalid {
+  box-shadow: none;
+}
+
+.paymentIcon {
+  filter: grayscale(20%);
+  transition: all 0.3s ease;
+}
+
+.paymentIcon:hover {
+  filter: grayscale(0%);
+}
+
+/* Loading state for form */
+.checkoutForm:has(.confirmBtn:disabled) {
+  pointer-events: none;
+  opacity: 0.7;
+}

@@ -26,6 +26,7 @@ import QuizStudent from "./pages/QuizStudent/quizStudent.jsx";
 import QuizInstructor from "./pages/quizInstructor/quizInstructor.jsx";
 import Courses from "./pages/Courses/Courses.jsx";
 import MyCourses from "./pages/MyCourses/MyCourses.jsx";
+import Checkout from"./pages/Checkout/CheckoutPage.jsx";
 
 // PrivateRoute wrapper
 function PrivateRoute({ children }) {
@@ -157,12 +158,20 @@ function App() {
             }
           />
           <Route
-            path="/courseoverview"
+            path="/course-overview/:courseId" // <-- Correct dynamic route path
             element={
               <PrivateRoute>
                 <CourseOverview />
               </PrivateRoute>
             }
+          />
+          <Route 
+          path="/checkout"
+          element={
+            <PrivateRoute>
+              <Checkout/>
+            </PrivateRoute>
+          }
           />
           <Route
             path="/admin/*"
