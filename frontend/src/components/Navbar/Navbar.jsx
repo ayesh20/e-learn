@@ -1,30 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaUser } from "react-icons/fa";
+import { FaEnvelope, FaUser, FaBars, FaTimes } from "react-icons/fa";
 import { profileAPI, instructorAPI } from "../../services/api.js";
 import styles from "./Navbar.module.css";
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userProfile, setUserProfile] = useState({
     firstName: '',
     profileImage: null,
     imageUrl: null,
     hasImage: false,
-    userType: null // Track user type
+    userType: null
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dropdownRef = useRef();
+  const mobileMenuRef = useRef();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
         
-        // Get stored user data to determine user type
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const userType = userData.role || userData.userType || 'student'; // Check what field stores user type
+        const userType = userData.role || userData.userType || 'student';
         
         console.log('Navbar: User type detected:', userType);
         console.log('Navbar: Stored user data:', userData);
@@ -33,9 +34,7 @@ const Navbar = () => {
         let profileData = {};
 
         if (userType === 'instructor') {
-          // Fetch instructor profile
           try {
-            // Use getProfile method for instructor (not getInstructor which needs ID)
             response = await instructorAPI.getProfile();
             console.log('Navbar: Instructor profile response:', response);
             
@@ -50,7 +49,6 @@ const Navbar = () => {
             }
           } catch (instructorError) {
             console.error('Navbar: Error fetching instructor profile:', instructorError);
-            // Fallback to stored data
             profileData = {
               firstName: userData.firstName || userData.name || 'Instructor',
               profileImage: null,
@@ -60,7 +58,6 @@ const Navbar = () => {
             };
           }
         } else {
-          // Fetch student profile (default)
           try {
             response = await profileAPI.getProfile();
             console.log('Navbar: Student profile response:', response);
@@ -76,7 +73,6 @@ const Navbar = () => {
             }
           } catch (studentError) {
             console.error('Navbar: Error fetching student profile:', studentError);
-            // Fallback to stored data
             profileData = {
               firstName: userData.firstName || 'Student',
               profileImage: null,
@@ -92,7 +88,6 @@ const Navbar = () => {
         
       } catch (error) {
         console.error('Navbar: General error:', error);
-        // Final fallback
         setUserProfile({
           firstName: 'User',
           profileImage: null,
@@ -105,7 +100,6 @@ const Navbar = () => {
       }
     };
 
-    // Only fetch if user is authenticated
     const token = localStorage.getItem('authToken');
     if (token) {
       fetchUserProfile();
@@ -115,11 +109,9 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    // Clear auth data
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
     
-    // Reset user profile state
     setUserProfile({
       firstName: '',
       profileImage: null,
@@ -128,7 +120,7 @@ const Navbar = () => {
       userType: null
     });
     
-    // Redirect to login
+    setMobileMenuOpen(false);
     navigate("/");
   };
 
@@ -137,6 +129,10 @@ const Navbar = () => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) && 
+          !event.target.closest(`.${styles.burgerIcon}`)) {
+        setMobileMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -160,21 +156,18 @@ const Navbar = () => {
           className={styles.avatar}
           onError={(e) => {
             console.log('Navbar: Image failed to load:', e.target.src);
-            // Try fallback URL construction
             if (userProfile.profileImage && !e.target.src.includes('/uploads/profiles/')) {
               e.target.src = `http://localhost:5000/uploads/profiles/${userProfile.profileImage}`;
             } else {
-              // Final fallback to default image
               e.target.src = "/images/user.jpg";
             }
-            e.target.onerror = null; // Prevent infinite loop
+            e.target.onerror = null;
           }}
           onLoad={() => console.log('Navbar: Image loaded successfully')}
         />
       );
     }
 
-    // Default profile image
     return (
       <img
         src="/images/user.jpg"
@@ -191,29 +184,29 @@ const Navbar = () => {
   const getDropdownItems = () => {
     if (userProfile.userType === 'instructor') {
       return (
-        <>
-          
-          <Link
-            to="/InstructorDashboard"
-            className={styles.dropdownItem}
-            onClick={() => setDropdownOpen(false)}
-          >
-            Dashboard
-          </Link>
-        </>
+        <Link
+          to="/InstructorDashboard"
+          className={styles.dropdownItem}
+          onClick={() => {
+            setDropdownOpen(false);
+            setMobileMenuOpen(false);
+          }}
+        >
+          Dashboard
+        </Link>
       );
     } else {
       return (
-        <>
-          
-          <Link
-            to="/profileedit"
-            className={styles.dropdownItem}
-            onClick={() => setDropdownOpen(false)}
-          >
-            Edit Profile
-          </Link>
-        </>
+        <Link
+          to="/profileedit"
+          className={styles.dropdownItem}
+          onClick={() => {
+            setDropdownOpen(false);
+            setMobileMenuOpen(false);
+          }}
+        >
+          Edit Profile
+        </Link>
       );
     }
   };
@@ -224,7 +217,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className={styles.logo}>EduFlex</div>
 
-        {/* Navigation */}
+        {/* Desktop Navigation */}
         <nav className={styles.nav}>
           <Link to="/Home" className={styles.navLink}>Home</Link>
           <Link to="/courses" className={styles.navLink}>Courses</Link>
@@ -235,8 +228,8 @@ const Navbar = () => {
           </Link>
         </nav>
 
-        {/* User Section */}
-        <div className={styles.userSection} ref={dropdownRef}>
+        {/* Desktop User Section */}
+        <div className={`${styles.userSection} ${styles.desktopOnly}`} ref={dropdownRef}>
           <div
             className={styles.userBox}
             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -245,7 +238,6 @@ const Navbar = () => {
             <span className={styles.userName}>
               {loading ? 'Loading...' : userProfile.firstName || 'User'}
             </span>
-            
           </div>
 
           {dropdownOpen && (
@@ -260,9 +252,76 @@ const Navbar = () => {
             </div>
           )}
         </div>
+
+        {/* Mobile Burger Icon */}
+        <div 
+          className={styles.burgerIcon}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </div>
       </div>
-      
-      
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className={styles.mobileMenu} ref={mobileMenuRef}>
+          <div className={styles.mobileUserInfo}>
+            {renderProfileImage()}
+            <span className={styles.mobileUserName}>
+              {loading ? 'Loading...' : userProfile.firstName || 'User'}
+            </span>
+          </div>
+          
+          <div className={styles.mobileNavLinks}>
+            <Link 
+              to="/Home" 
+              className={styles.mobileNavLink}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/courses" 
+              className={styles.mobileNavLink}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Courses
+            </Link>
+            <Link 
+              to="/aboutus" 
+              className={styles.mobileNavLink}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About Us
+            </Link>
+            <Link 
+              to="/contactus" 
+              className={styles.mobileNavLink}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact
+            </Link>
+            <Link 
+              to="/messagingstudent1" 
+              className={styles.mobileNavLink}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Messages
+            </Link>
+            
+            <div className={styles.mobileDivider}></div>
+            
+            {getDropdownItems()}
+            
+            <button
+              onClick={handleLogout}
+              className={styles.mobileLogoutBtn}
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

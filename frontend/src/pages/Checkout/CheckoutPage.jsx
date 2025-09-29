@@ -9,10 +9,47 @@ export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Get course data from navigation state
+  const getUserInfo = () => {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      return { isAuthenticated: false, studentId: null, studentName: null, studentEmail: null };
+    }
+
+    const userDataStr = localStorage.getItem('userData');
+    if (userDataStr) {
+      try {
+        const userData = JSON.parse(userDataStr);
+        return {
+          isAuthenticated: true,
+          studentId: userData._id || userData.id || userData.studentId,
+          studentName: userData.firstName || userData.name || userData.username || 'Student',
+          studentEmail: userData.email || userData.studentEmail || 'student@example.com',
+        };
+      } catch (e) {
+        console.error('Error parsing userData:', e);
+      }
+    }
+
+    return {
+      isAuthenticated: true,
+      studentId: localStorage.getItem('studentId'),
+      studentName: localStorage.getItem('studentName') || localStorage.getItem('currentUser') || 'Student',
+      studentEmail: localStorage.getItem('studentEmail') || localStorage.getItem('userEmail') || 'student@example.com'
+    };
+  };
+
+  const userInfo = getUserInfo();
   const courseData = location.state?.courseData;
-  const studentEmail = location.state?.studentEmail || localStorage.getItem('studentEmail') || localStorage.getItem('userEmail') || '';
-  const studentName = location.state?.studentName || localStorage.getItem('studentName') || localStorage.getItem('currentUser') || '';
+  const studentEmail = location.state?.studentEmail || userInfo.studentEmail;
+  const studentName = location.state?.studentName || userInfo.studentName;
+  const studentId = location.state?.studentId || userInfo.studentId;
+
+  console.log('=== CHECKOUT PAGE DEBUG ===');
+  console.log('User Info:', userInfo);
+  console.log('Student ID:', studentId);
+  console.log('Student Name:', studentName);
+  console.log('Student Email:', studentEmail);
+  console.log('Course Data:', courseData);
 
   const [formData, setFormData] = useState({
     nameOnCard: '',
@@ -25,20 +62,22 @@ export default function Checkout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Redirect if no course data
   useEffect(() => {
     if (!courseData) {
+      alert('No course selected. Redirecting to courses page.');
       navigate('/courses');
+    } else if (!userInfo.isAuthenticated) {
+      alert('Please login to checkout.');
+      navigate('/');
     }
-  }, [courseData, navigate]);
+  }, [courseData, userInfo.isAuthenticated, navigate]);
 
-  if (!courseData) {
-    return null; // Will redirect above
+  if (!courseData || !userInfo.isAuthenticated) {
+    return null;
   }
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
@@ -69,12 +108,16 @@ export default function Checkout() {
       newErrors.cvc = 'CVC must be at least 3 digits';
     }
 
-    if (!studentEmail.trim()) {
-      newErrors.email = 'Student email is required';
+    if (!studentEmail || !studentEmail.trim()) {
+      newErrors.email = 'Student email is required. Please login again.';
     }
 
-    if (!studentName.trim()) {
-      newErrors.name = 'Student name is required';
+    if (!studentName || !studentName.trim()) {
+      newErrors.name = 'Student name is required. Please login again.';
+    }
+
+    if (!studentId || !studentId.trim()) {
+      newErrors.studentId = 'Student ID is missing. Please login again.';
     }
 
     setErrors(newErrors);
@@ -82,17 +125,13 @@ export default function Checkout() {
   };
 
   const formatCardNumber = (value) => {
-    // Remove all non-digit characters
     const cleaned = value.replace(/\D/g, '');
-    // Add spaces every 4 digits
     const formatted = cleaned.replace(/(\d{4})(?=\d)/g, '$1 ');
-    return formatted.slice(0, 19); // Limit to 16 digits + 3 spaces
+    return formatted.slice(0, 19);
   };
 
   const formatExpirationDate = (value) => {
-    // Remove all non-digit characters
     const cleaned = value.replace(/\D/g, '');
-    // Add slash after 2 digits
     if (cleaned.length >= 2) {
       return cleaned.slice(0, 2) + '/' + cleaned.slice(2, 4);
     }
@@ -103,50 +142,66 @@ export default function Checkout() {
     e.preventDefault();
     
     if (!validateForm()) {
+      console.log('Form validation failed:', errors);
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      // Simulate payment processing delay
+      // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Create enrollment record
-      const enrollmentData = {
+      // FIXED: Match backend schema exactly - only send fields that exist in schema
+      const cleanEnrollmentData = {
         courseName: courseData.title,
         studentName: studentName,
         studentEmail: studentEmail,
         enrollmentStatus: 'ENROLLED',
-        enrollmentDate: new Date(),
-        progress: 0,
-        grade: 'Not Given'
+        progress: 0
       };
 
-      console.log('Creating enrollment with data:', enrollmentData);
+      console.log('=== CLEAN ENROLLMENT DATA ===');
+      console.log('courseName:', cleanEnrollmentData.courseName);
+      console.log('studentName:', cleanEnrollmentData.studentName);
+      console.log('studentEmail:', cleanEnrollmentData.studentEmail);
+      console.log('enrollmentStatus:', cleanEnrollmentData.enrollmentStatus);
+      console.log('progress:', cleanEnrollmentData.progress);
+      console.log('Full object:', JSON.stringify(cleanEnrollmentData, null, 2));
 
-      await enrollmentAPI.createEnrollment(enrollmentData);
+      // Validate before sending
+      if (!cleanEnrollmentData.courseName) {
+        throw new Error('Course name is missing');
+      }
+      if (!cleanEnrollmentData.studentName) {
+        throw new Error('Student name is missing');
+      }
+      if (!cleanEnrollmentData.studentEmail) {
+        throw new Error('Student email is missing');
+      }
 
-      // Show success message
+      console.log('=== SENDING TO API ===');
+      const response = await enrollmentAPI.createEnrollment(cleanEnrollmentData);
+      console.log('=== API RESPONSE ===', response);
+
       alert(`Payment successful! You are now enrolled in "${courseData.title}"`);
-      
-      // Navigate to courses page or enrollment confirmation
-      navigate('/courses', { 
-        state: { 
-          message: `Successfully enrolled in "${courseData.title}"!`,
-          type: 'success' 
-        }
-      });
+      navigate('/courses');
 
     } catch (error) {
-      console.error('Error processing payment/enrollment:', error);
+      console.error('=== ENROLLMENT ERROR ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response?.data);
       
       let errorMessage = 'Payment processing failed. Please try again.';
       
-      if (error.message.includes('already enrolled')) {
+      if (error.message?.includes('already enrolled')) {
         errorMessage = 'You are already enrolled in this course!';
-      } else if (error.message.includes('network') || error.message.includes('Network')) {
-        errorMessage = 'Network error. Please check your connection and try again.';
+        setTimeout(() => navigate('/courses'), 2000);
+      } else if (error.message?.includes('Validation')) {
+        errorMessage = 'Validation failed. Please check the console and try again.';
+      } else if (error.message?.includes('network') || error.message?.includes('Network')) {
+        errorMessage = 'Network error. Please check your connection.';
       }
       
       alert(errorMessage);
@@ -155,9 +210,8 @@ export default function Checkout() {
     }
   };
 
-  // Calculate totals
   const subtotal = courseData.priceValue || 0;
-  const tax = 0; // No tax for now
+  const tax = 0;
   const total = subtotal + tax;
 
   return (
@@ -166,11 +220,9 @@ export default function Checkout() {
       
       <div className={styles.checkoutPage}>
         <div className={styles.checkoutContainer}>
-          {/* Left Section - Payment Form */}
           <div className={styles.paymentSection}>
             <h2>Checkout</h2>
             
-            {/* Student Information Display */}
             <div className={styles.studentInfo}>
               <h3>Student Information</h3>
               <div className={styles.infoItem}>
@@ -181,15 +233,21 @@ export default function Checkout() {
                 <label>Email:</label>
                 <span>{studentEmail || 'Not provided'}</span>
               </div>
+              <div className={styles.infoItem}>
+                <label>Student ID:</label>
+                <span style={{fontSize: '12px', wordBreak: 'break-all'}}>
+                  {studentId || 'Not provided'}
+                </span>
+              </div>
             </div>
             
             <div className={styles.cartType}>
               <p>Payment Method</p>
               <div className={styles.paymentMethods}>
-                <img src="/images/paypal.png" alt="PayPal" className={styles.paymentIcon} />
-                <img src="/images/amex.png" alt="American Express" className={styles.paymentIcon} />
-                <img src="/images/visa.png" alt="Visa" className={styles.paymentIcon} />
-                <img src="/images/mastercard.png" alt="Mastercard" className={styles.paymentIcon} />
+                <img src="/images/paypal.png" alt="PayPal" className={styles.paymentIcon} onError={(e) => e.target.style.display='none'} />
+                <img src="/images/amex.png" alt="American Express" className={styles.paymentIcon} onError={(e) => e.target.style.display='none'} />
+                <img src="/images/visa.png" alt="Visa" className={styles.paymentIcon} onError={(e) => e.target.style.display='none'} />
+                <img src="/images/mastercard.png" alt="Mastercard" className={styles.paymentIcon} onError={(e) => e.target.style.display='none'} />
               </div>
             </div>
 
@@ -261,10 +319,11 @@ export default function Checkout() {
                 </label>
               </div>
 
-              {(errors.email || errors.name) && (
+              {(errors.email || errors.name || errors.studentId) && (
                 <div className={styles.errorMessage}>
                   {errors.email && <p>{errors.email}</p>}
                   {errors.name && <p>{errors.name}</p>}
+                  {errors.studentId && <p>{errors.studentId}</p>}
                   <p>Please ensure you are logged in properly.</p>
                 </div>
               )}
@@ -286,7 +345,6 @@ export default function Checkout() {
             </form>
           </div>
 
-          {/* Right Section - Order Summary */}
           <div className={styles.summarySection}>
             <h3>Order Summary</h3>
             
@@ -304,9 +362,9 @@ export default function Checkout() {
                 <p className={styles.courseCategory}>{courseData.category}</p>
                 <p className={styles.courseInstructor}>by {courseData.author}</p>
                 <div className={styles.courseFeatures}>
-                  <span>🎓 Certificate included</span>
-                  <span>♾️ Lifetime access</span>
-                  <span>📱 Mobile friendly</span>
+                  <span>Certificate included</span>
+                  <span>Lifetime access</span>
+                  <span>Mobile friendly</span>
                 </div>
                 <span className={styles.price}>{courseData.price}</span>
               </div>

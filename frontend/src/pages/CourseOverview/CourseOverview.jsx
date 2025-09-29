@@ -17,15 +17,62 @@ const CourseOverview = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  // Get current user info from localStorage
-  const currentStudent = localStorage.getItem('studentId') || 
-                        localStorage.getItem('studentName') || 
-                        localStorage.getItem('currentUser') || 
-                        'guest';
-  
-  const studentEmail = localStorage.getItem('studentEmail') || 
-                      localStorage.getItem('userEmail') || 
-                      'student@example.com';
+  // FIXED: Better way to get current user info
+  const getUserInfo = () => {
+    // First check if user is authenticated
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      console.log('No auth token found');
+      return { isAuthenticated: false, studentId: null, studentName: null, studentEmail: null };
+    }
+
+    // Get userData object (this is what's typically stored during login)
+    const userDataStr = localStorage.getItem('userData');
+    console.log('Raw userData from localStorage:', userDataStr);
+    
+    if (userDataStr) {
+      try {
+        const userData = JSON.parse(userDataStr);
+        console.log('Parsed userData:', userData);
+        
+        return {
+          isAuthenticated: true,
+          studentId: userData._id || userData.id || userData.studentId,
+          studentName: userData.firstName || userData.name || userData.username || 'Student',
+          studentEmail: userData.email || userData.studentEmail || 'student@example.com',
+          fullUserData: userData
+        };
+      } catch (e) {
+        console.error('Error parsing userData:', e);
+      }
+    }
+
+    // Fallback: try individual keys
+    const studentId = localStorage.getItem('studentId');
+    const studentName = localStorage.getItem('studentName') || localStorage.getItem('currentUser');
+    const studentEmail = localStorage.getItem('studentEmail') || localStorage.getItem('userEmail');
+
+    if (studentId || studentName || studentEmail) {
+      console.log('Using fallback localStorage values');
+      return {
+        isAuthenticated: true,
+        studentId,
+        studentName: studentName || 'Student',
+        studentEmail: studentEmail || 'student@example.com'
+      };
+    }
+
+    console.log('No user information found in localStorage');
+    return { isAuthenticated: false, studentId: null, studentName: null, studentEmail: null };
+  };
+
+  const userInfo = getUserInfo();
+  console.log('=== USER INFO DEBUG ===');
+  console.log('Is Authenticated:', userInfo.isAuthenticated);
+  console.log('Student ID:', userInfo.studentId);
+  console.log('Student Name:', userInfo.studentName);
+  console.log('Student Email:', userInfo.studentEmail);
+  console.log('Auth Token exists:', !!localStorage.getItem('authToken'));
 
   useEffect(() => {
     if (location.state?.courseData) {
@@ -100,9 +147,14 @@ const CourseOverview = () => {
   };
 
   const handleEnrollNow = () => {
-    if (currentStudent === 'guest') {
+    console.log('=== ENROLL NOW CLICKED ===');
+    console.log('User authenticated:', userInfo.isAuthenticated);
+    console.log('User info:', userInfo);
+
+    // FIXED: Check authentication properly
+    if (!userInfo.isAuthenticated) {
       alert('Please login to enroll in courses');
-      navigate('/login');
+      navigate('/');
       return;
     }
 
@@ -111,8 +163,9 @@ const CourseOverview = () => {
       navigate('/checkout', {
         state: {
           courseData: course,
-          studentEmail: studentEmail,
-          studentName: currentStudent
+          studentEmail: userInfo.studentEmail,
+          studentName: userInfo.studentName,
+          studentId: userInfo.studentId
         }
       });
     } else {
@@ -125,26 +178,39 @@ const CourseOverview = () => {
     try {
       setIsEnrolling(true);
       
+      console.log('=== ATTEMPTING FREE ENROLLMENT ===');
+      console.log('Course:', course.title);
+      console.log('Student Name:', userInfo.studentName);
+      console.log('Student Email:', userInfo.studentEmail);
+
+      // FIXED: Match backend schema - only send fields that exist
       const enrollmentData = {
         courseName: course.title,
-        studentName: currentStudent,
-        studentEmail: studentEmail,
+        studentName: userInfo.studentName,
+        studentEmail: userInfo.studentEmail,
         enrollmentStatus: 'ENROLLED',
-        enrollmentDate: new Date(),
         progress: 0
       };
 
-      await enrollmentAPI.createEnrollment(enrollmentData);
+      console.log('Enrollment data being sent:', enrollmentData);
+      console.log('JSON:', JSON.stringify(enrollmentData, null, 2));
+
+      const response = await enrollmentAPI.createEnrollment(enrollmentData);
+      console.log('Enrollment response:', response);
       
       alert('Successfully enrolled in the course!');
       navigate('/courses');
       
     } catch (error) {
-      console.error('Error enrolling in course:', error);
+      console.error('=== ENROLLMENT ERROR ===');
+      console.error('Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error response:', error.response);
+      
       if (error.message.includes('already enrolled')) {
         alert('You are already enrolled in this course!');
       } else {
-        alert('Failed to enroll in course. Please try again.');
+        alert(`Failed to enroll in course: ${error.message || 'Please try again.'}`);
       }
     } finally {
       setIsEnrolling(false);
@@ -155,88 +221,6 @@ const CourseOverview = () => {
     if (!hours || hours === 0) return 'Self-paced';
     if (hours < 1) return `${Math.round(hours * 60)} minutes`;
     return `${hours} hour${hours > 1 ? 's' : ''}`;
-  };
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'overview':
-        return (
-          <div className={styles.tabContent}>
-            <div className={styles.descriptionSection}>
-              <h3>About This Course</h3>
-              <div className={styles.description}>
-                <p>
-                  {showFullDescription 
-                    ? course.description 
-                    : course.description.length > 300 
-                      ? `${course.description.substring(0, 300)}...`
-                      : course.description
-                  }
-                </p>
-                {course.description.length > 300 && (
-                  <button 
-                    className={styles.readMoreBtn}
-                    onClick={() => setShowFullDescription(!showFullDescription)}
-                  >
-                    {showFullDescription ? 'Show Less' : 'Read More'}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {course.objectives && course.objectives.length > 0 && (
-              <div className={styles.objectivesSection}>
-                <h3>What You'll Learn</h3>
-                <ul className={styles.objectivesList}>
-                  {course.objectives.map((objective, index) => (
-                    <li key={index}>{objective}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {course.requirements && course.requirements.length > 0 && (
-              <div className={styles.requirementsSection}>
-                <h3>Requirements</h3>
-                <ul className={styles.requirementsList}>
-                  {course.requirements.map((requirement, index) => (
-                    <li key={index}>{requirement}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        );
-      
-      
-      
-      case 'instructor':
-        return (
-          <div className={styles.tabContent}>
-            <div className={styles.instructorSection}>
-              <div className={styles.instructorCard}>
-                <img 
-                  src={course.authorImg} 
-                  alt={course.author}
-                  className={styles.instructorImage}
-                />
-                <div className={styles.instructorInfo}>
-                  <h3>{course.author}</h3>
-                  <p className={styles.instructorTitle}>Course Instructor</p>
-                  <p className={styles.instructorBio}>
-                    Experienced professional in {course.category} with extensive knowledge 
-                    in teaching and practical applications. Committed to helping students 
-                    achieve their learning goals through comprehensive and engaging instruction.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      
-      default:
-        return null;
-    }
   };
 
   if (loading) {
@@ -271,6 +255,27 @@ const CourseOverview = () => {
   return (
     <div className={styles.courseOverviewPage}>
       <Navbar />
+      
+      {/* DEBUG INFO - Remove this in production */}
+      <div style={{
+        position: 'fixed',
+        bottom: '10px',
+        right: '10px',
+        background: 'rgba(0,0,0,0.8)',
+        color: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+        fontSize: '12px',
+        zIndex: 9999,
+        maxWidth: '300px'
+      }}>
+        <strong>Debug Info:</strong><br/>
+        Authenticated: {userInfo.isAuthenticated ? '✅' : '❌'}<br/>
+        Name: {userInfo.studentName || 'N/A'}<br/>
+        Email: {userInfo.studentEmail || 'N/A'}<br/>
+        ID: {userInfo.studentId || 'N/A'}<br/>
+        Token: {localStorage.getItem('authToken') ? '✅' : '❌'}
+      </div>
       
       <div className={styles.courseHero}>
         <div className={styles.heroContent}>
@@ -358,26 +363,6 @@ const CourseOverview = () => {
             </div>
           </div>
         </div>
-      </div>
-      
-      <div className={styles.courseContent}>
-        <div className={styles.tabNavigation}>
-          <button 
-            className={`${styles.tabBtn} ${activeTab === 'overview' ? styles.active : ''}`}
-            onClick={() => setActiveTab('overview')}
-          >
-            Overview
-          </button>
-         
-          <button 
-            className={`${styles.tabBtn} ${activeTab === 'instructor' ? styles.active : ''}`}
-            onClick={() => setActiveTab('instructor')}
-          >
-            Instructor
-          </button>
-        </div>
-        
-        {renderTabContent()}
       </div>
       
       <Footer />

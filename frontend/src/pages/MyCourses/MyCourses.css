@@ -261,7 +261,10 @@ header h2 {
   flex: 1 1 400px;
   text-align: center;
 }
-
+.section3-text1{
+  
+  color: #45a049;
+}
 .section3-text h2 {
   font-size: 28px;
   font-weight: bold;
