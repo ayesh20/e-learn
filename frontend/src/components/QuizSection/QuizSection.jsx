@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { courseAPI } from "../../services/api";
 import styles from "./QuizSection.module.css";
 
-const QuizSection = ({ courseId, onQuizSaved }) => {
-  const navigate = useNavigate();
-  
-  const [quizzes, setQuizzes] = useState([{ id: 1, name: "Quiz 1", questions: {} }]);
-  const [activeQuiz, setActiveQuiz] = useState(1);
+const QuizSection = ({ quizzes = [], onChange }) => {
+  const [activeQuiz, setActiveQuiz] = useState(0);
   const [page, setPage] = useState(1);
   const [questions, setQuestions] = useState(Array.from({ length: 15 }, (_, i) => i + 1));
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   
   // Current question data
   const [currentQuestion, setCurrentQuestion] = useState({
@@ -24,11 +17,34 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
     correctAnswer: ''
   });
 
+  // Initialize quizzes if empty
+  useEffect(() => {
+    if (quizzes.length === 0) {
+      onChange([{ 
+        id: 1, 
+        name: "Quiz 1",
+        description: "",
+        timeLimit: 30,
+        attempts: 3,
+        passingScore: 70,
+        questions: [],
+        isActive: true
+      }]);
+    }
+  }, []);
+
   // Load current question data when page or quiz changes
   useEffect(() => {
-    const currentQuiz = quizzes.find(q => q.id === activeQuiz);
-    if (currentQuiz && currentQuiz.questions[page]) {
-      setCurrentQuestion(currentQuiz.questions[page]);
+    if (quizzes[activeQuiz]?.questions[page - 1]) {
+      const q = quizzes[activeQuiz].questions[page - 1];
+      setCurrentQuestion({
+        question: q.question,
+        answer1: q.options[0] || '',
+        answer2: q.options[1] || '',
+        answer3: q.options[2] || '',
+        answer4: q.options[3] || '',
+        correctAnswer: q.correctAnswer
+      });
     } else {
       setCurrentQuestion({
         question: '',
@@ -46,14 +62,18 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
   };
 
   const addQuiz = () => {
-    const nextId = quizzes.length + 1;
     const newQuiz = { 
-      id: nextId, 
-      name: `Quiz ${nextId}`, 
-      questions: {} 
+      id: quizzes.length + 1, 
+      name: `Quiz ${quizzes.length + 1}`,
+      description: "",
+      timeLimit: 30,
+      attempts: 3,
+      passingScore: 70,
+      questions: [],
+      isActive: true
     };
-    setQuizzes([...quizzes, newQuiz]);
-    setActiveQuiz(nextId);
+    onChange([...quizzes, newQuiz]);
+    setActiveQuiz(quizzes.length);
     setPage(1);
   };
 
@@ -81,28 +101,45 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
     }
 
     // Check if correct answer matches one of the provided answers
-    const answers = [currentQuestion.answer1, currentQuestion.answer2, currentQuestion.answer3, currentQuestion.answer4];
+    const answers = [
+      currentQuestion.answer1, 
+      currentQuestion.answer2, 
+      currentQuestion.answer3, 
+      currentQuestion.answer4
+    ];
     if (!answers.includes(currentQuestion.correctAnswer)) {
       setError('Correct answer must match one of the provided answers');
       return false;
     }
 
     // Update quiz data
-    setQuizzes(prev => prev.map(quiz => {
-      if (quiz.id === activeQuiz) {
-        return {
-          ...quiz,
-          questions: {
-            ...quiz.questions,
-            [page]: { ...currentQuestion }
-          }
-        };
-      }
-      return quiz;
-    }));
+    const updatedQuizzes = [...quizzes];
+    const quiz = updatedQuizzes[activeQuiz];
+    
+    const questionData = {
+      questionNumber: page,
+      question: currentQuestion.question,
+      type: 'multiple-choice',
+      options: [
+        currentQuestion.answer1,
+        currentQuestion.answer2,
+        currentQuestion.answer3,
+        currentQuestion.answer4
+      ],
+      correctAnswer: currentQuestion.correctAnswer,
+      points: 1
+    };
 
+    // Update or add question
+    const existingIndex = quiz.questions.findIndex(q => q.questionNumber === page);
+    if (existingIndex >= 0) {
+      quiz.questions[existingIndex] = questionData;
+    } else {
+      quiz.questions.push(questionData);
+    }
+
+    onChange(updatedQuizzes);
     setError(null);
-    console.log('Question saved successfully');
     return true;
   };
 
@@ -129,102 +166,22 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
       if (page < questions.length) {
         setPage(page + 1);
       } else {
-        // Add new question if at the end
         addQuestion();
       }
     }
   };
 
-  const saveAllQuizzes = async () => {
-    try {
-      if (!courseId) {
-        setError('Please save course basic information first');
-        return;
-      }
-
-      setLoading(true);
-      
-      // Save current question first
-      if (!saveCurrentQuestion()) return;
-      
-      // Prepare quiz data for storage
-      const quizData = quizzes.map(quiz => ({
-        id: quiz.id,
-        name: quiz.name,
-        questions: Object.keys(quiz.questions).map(qNum => ({
-          questionNumber: parseInt(qNum),
-          question: quiz.questions[qNum].question,
-          options: [
-            quiz.questions[qNum].answer1,
-            quiz.questions[qNum].answer2,
-            quiz.questions[qNum].answer3,
-            quiz.questions[qNum].answer4
-          ],
-          correctAnswer: quiz.questions[qNum].correctAnswer,
-          points: 1 // Default points per question
-        })).filter(q => q.question.trim() !== '') // Only include questions with content
-      })).filter(quiz => quiz.questions.length > 0); // Only include quizzes with questions
-
-      // If course exists, update it on server
-      if (courseId) {
-        // Note: You may need to extend your course model to include quizzes
-        // For now, we'll store it as additional data
-        await courseAPI.updateCourse(courseId, {
-          quizzes: quizData,
-          // You might want to add this to your course schema
-          additionalData: {
-            quizzes: quizData
-          }
-        });
-      }
-
-      // Call the callback with saved quiz data
-      if (onQuizSaved) {
-        onQuizSaved(quizData);
-      }
-
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-      
-      console.log('All quizzes saved successfully:', quizData);
-      
-    } catch (error) {
-      console.error('Failed to save quizzes:', error);
-      setError('Failed to save quizzes: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSaveAll = async () => {
-    await saveAllQuizzes();
-    // Navigate back to dashboard after saving
-    navigate("/instructordashboard");
-  };
-
-  const exportQuizData = () => {
-    // Export current quiz data as JSON for backup
-    const dataToExport = {
-      courseId: courseId,
-      quizzes: quizzes,
-      exportDate: new Date().toISOString()
-    };
-    
-    const dataStr = JSON.stringify(dataToExport, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `quiz-data-course-${courseId}.json`;
-    link.click();
-    
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className={styles.quiz}>
-      {/* Error/Success Messages */}
+      <div className={styles.quizHeader}>
+        <h2>Add Quiz</h2>
+        <p className={styles.info}>
+          Total Quizzes: {quizzes.length} | 
+          Questions in current quiz: {quizzes[activeQuiz]?.questions.length || 0}
+        </p>
+      </div>
+
+      {/* Error Messages */}
       {error && (
         <div className={styles.errorMessage}>
           <p>Error: {error}</p>
@@ -232,76 +189,50 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
         </div>
       )}
 
-      {success && (
-        <div className={styles.successMessage}>
-          <p>Quizzes saved successfully!</p>
-          <button onClick={() => setSuccess(false)}>×</button>
-        </div>
-      )}
-
-      {loading && (
-        <div className={styles.loadingOverlay}>
-          <div className={styles.spinner}>Saving quizzes...</div>
-        </div>
-      )}
-
-      <div className={styles.quizHeader}>
-        <h3>Add Quiz</h3>
-        <div className={styles.quizActions}>
-          <span className={styles.courseInfo}>
-            {courseId ? `Course ID: ${courseId}` : 'Save basic info first'}
-          </span>
-          <button className={styles.exportBtn} onClick={exportQuizData} disabled={!courseId}>
-            Export Quiz Data
-          </button>
-          <button className={styles.saveAllBtn} onClick={saveAllQuizzes} disabled={!courseId || loading}>
-            Save All Quizzes
-          </button>
-        </div>
-      </div>
-
       <div className={styles.top}>
-        {quizzes.map((q) => (
+        {quizzes.map((q, index) => (
           <button
             key={q.id}
-            className={`${styles.quizBtn} ${activeQuiz === q.id ? styles.activeQuiz : ""}`}
-            onClick={() => setActiveQuiz(q.id)}
+            type="button"
+            className={`${styles.quizBtn} ${activeQuiz === index ? styles.activeQuiz : ""}`}
+            onClick={() => setActiveQuiz(index)}
           >
             {q.name}
             <span className={styles.questionCount}>
-              ({Object.keys(q.questions).length} questions)
+              ({q.questions.length} questions)
             </span>
           </button>
         ))}
-        <button className={styles.addBtn} onClick={addQuiz}>+</button>
+        <button type="button" className={styles.addBtn} onClick={addQuiz}>+</button>
       </div>
 
       <div className={styles.main}>
         <div className={styles.pagination}>
-          {questions.map((num) => (
-            <button
-              key={num}
-              className={`${styles.pageBtn} ${page === num ? styles.active : ""} ${
-                quizzes.find(q => q.id === activeQuiz)?.questions[num] ? styles.hasContent : ''
-              }`}
-              onClick={() => {
-                if (saveCurrentQuestion()) {
-                  setPage(num);
-                }
-              }}
-            >
-              {num}
-            </button>
-          ))}
-          <button className={styles.addPageBtn} onClick={addQuestion}>+</button>
+          {questions.map((num) => {
+            const hasContent = quizzes[activeQuiz]?.questions.some(q => q.questionNumber === num);
+            return (
+              <button
+                key={num}
+                type="button"
+                className={`${styles.pageBtn} ${page === num ? styles.active : ""} ${
+                  hasContent ? styles.hasContent : ''
+                }`}
+                onClick={() => {
+                  if (saveCurrentQuestion()) {
+                    setPage(num);
+                  }
+                }}
+              >
+                {num}
+              </button>
+            );
+          })}
+          <button type="button" className={styles.addPageBtn} onClick={addQuestion}>+</button>
         </div>
 
         <div className={styles.questionBox}>
           <div className={styles.questionHeader}>
-            <h4>Question {page} - {quizzes.find(q => q.id === activeQuiz)?.name}</h4>
-            <div className={styles.questionMeta}>
-              <span>Total Questions: {Object.keys(quizzes.find(q => q.id === activeQuiz)?.questions || {}).length}</span>
-            </div>
+            <h4>Question {page} - {quizzes[activeQuiz]?.name}</h4>
           </div>
 
           <input 
@@ -344,6 +275,7 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
 
           <div className={styles.actions}>
             <button 
+              type="button"
               onClick={goToPrevious}
               disabled={page === 1}
               className={styles.navBtn}
@@ -351,18 +283,21 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
               Previous
             </button>
             <button 
+              type="button"
               className={styles.reset} 
               onClick={resetCurrentQuestion}
             >
               Reset
             </button>
             <button 
+              type="button"
               className={styles.save} 
               onClick={saveCurrentQuestion}
             >
               Save Question
             </button>
             <button 
+              type="button"
               onClick={goToNext}
               className={styles.navBtn}
             >
@@ -396,12 +331,6 @@ const QuizSection = ({ courseId, onQuizSaved }) => {
             </div>
           )}
         </div>
-      </div>
-
-      <div className={styles.finalActions}>
-        <button className={styles.bigSave} onClick={handleSaveAll} disabled={!courseId || loading}>
-          Save All & Return to Dashboard
-        </button>
       </div>
     </div>
   );

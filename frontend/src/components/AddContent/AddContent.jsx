@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { courseAPI } from "../../services/api";
 import styles from "./AddContent.module.css";
-import { X, Edit, Plus, Save, Trash } from "lucide-react";
+import { X, Plus, Save, Trash } from "lucide-react";
 
-const AddContent = ({ courseId, onContentSaved }) => {
+const AddContent = ({ content = [], onChange }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [contentPages, setContentPages] = useState([1]);
-  const [contentData, setContentData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   
   // Current page content
   const [pageContent, setPageContent] = useState({
@@ -22,40 +17,19 @@ const AddContent = ({ courseId, onContentSaved }) => {
     assignments: []
   });
 
-  // Load existing content from the database on initial component load
+  // Initialize pages from prop
   useEffect(() => {
-    const fetchContent = async () => {
-      if (!courseId) return;
-      setLoading(true);
-      try {
-        const response = await courseAPI.getCourseContent(courseId);
-        if (response && response.content) {
-          const fetchedData = {};
-          const pages = [];
-          response.content.forEach((page, index) => {
-            const pageNum = index + 1;
-            fetchedData[pageNum] = page;
-            pages.push(pageNum);
-          });
-          setContentData(fetchedData);
-          setContentPages(pages.length > 0 ? pages : [1]);
-          setCurrentPage(1);
-        }
-      } catch (err) {
-        console.error('Failed to fetch course content:', err);
-        setError('Failed to load existing course content.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (content && content.length > 0) {
+      const pages = content.map((_, index) => index + 1);
+      setContentPages(pages);
+      setCurrentPage(1);
+    }
+  }, []);
 
-    fetchContent();
-  }, [courseId]);
-
-  // Update current page content from state when currentPage changes
+  // Update current page content when currentPage or content changes
   useEffect(() => {
-    if (contentData[currentPage]) {
-      setPageContent(contentData[currentPage]);
+    if (content[currentPage - 1]) {
+      setPageContent(content[currentPage - 1]);
     } else {
       setPageContent({
         title: '',
@@ -67,49 +41,59 @@ const AddContent = ({ courseId, onContentSaved }) => {
         assignments: []
       });
     }
-  }, [currentPage, contentData]);
+  }, [currentPage, content]);
 
   const handleInputChange = (field, value) => {
     setPageContent(prev => ({ ...prev, [field]: value }));
   };
 
   const addPage = () => {
-    const newPage = Math.max(...contentPages) + 1;
-    setContentPages(prev => [...prev, newPage]);
-    setCurrentPage(newPage);
+    const newPageNum = Math.max(...contentPages, 0) + 1;
+    setContentPages(prev => [...prev, newPageNum]);
+    
+    // Add empty page to content array
+    const newContent = [...content, {
+      title: '',
+      subtitle: '',
+      description: '',
+      duration: 0,
+      videos: [],
+      resources: [],
+      assignments: []
+    }];
+    onChange(newContent);
+    setCurrentPage(newPageNum);
   };
   
   const deletePage = (pageNumber) => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete Page ${pageNumber}? This action cannot be undone.`);
+    const isConfirmed = window.confirm(`Are you sure you want to delete Page ${pageNumber}?`);
     if (isConfirmed) {
-      const newContentPages = contentPages.filter(p => p !== pageNumber);
-      const newContentData = { ...contentData };
-      delete newContentData[pageNumber];
+      const newContent = content.filter((_, index) => index + 1 !== pageNumber);
+      const newPages = contentPages.filter(p => p !== pageNumber).map((p, index) => index + 1);
       
-      setContentPages(newContentPages.length > 0 ? newContentPages : [1]);
-      setContentData(newContentData);
-      
-      // Navigate to the first available page or page 1
-      setCurrentPage(newContentPages.length > 0 ? newContentPages[0] : 1);
+      setContentPages(newPages.length > 0 ? newPages : [1]);
+      onChange(newContent);
+      setCurrentPage(newPages.length > 0 ? newPages[0] : 1);
     }
   };
 
   const handleFileUpload = (e, type) => {
     const file = e.target.files[0];
     if (file) {
-      setPageContent(prev => {
-        const fileData = {
-          name: file.name,
-          url: URL.createObjectURL(file),
-          size: file.size,
-          type: file.type,
-        };
-        return {
-          ...prev,
-          [type]: [...prev[type], fileData]
-        };
-      });
-      // Clear file input
+      const fileData = {
+        name: file.name,
+        url: URL.createObjectURL(file),
+        title: file.name,
+        size: file.size,
+        type: file.type,
+        uploadDate: new Date()
+      };
+      
+      setPageContent(prev => ({
+        ...prev,
+        [type]: [...prev[type], fileData]
+      }));
+      
       e.target.value = null;
     }
   };
@@ -121,55 +105,15 @@ const AddContent = ({ courseId, onContentSaved }) => {
     }));
   };
 
-  // Function to save the current page to the local state
+  // Save current page to parent state
   const saveCurrentPage = () => {
-    setContentData(prev => ({
-      ...prev,
-      [currentPage]: pageContent
-    }));
-    setSuccess(true);
-    setTimeout(() => setSuccess(false), 2000);
-  };
-
-  // New function to save ALL content to the database
-  const handleSaveContent = async () => {
-    if (!courseId) {
-      setError('No course ID found. Cannot save content.');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    try {
-      // First, save the current page to local state to ensure it's included
-      const updatedContentData = { ...contentData, [currentPage]: pageContent };
-      setContentData(updatedContentData);
-      
-      // Format data as a clean array for the API
-      const contentArray = Object.values(updatedContentData);
-      
-      const payload = {
-        content: contentArray,
-        type: 'content' // Used by the backend to handle the request
-      };
-
-      const response = await courseAPI.updateCourseContent(courseId, payload);
-      
-      if (response && response.course) {
-        setSuccess(true);
-        console.log('Course content saved successfully:', response.course.content);
-        if (onContentSaved) {
-          onContentSaved(response.course.content);
-        }
-      }
-    } catch (err) {
-      console.error('Error saving course content:', err);
-      setError(err.message || 'Failed to save course content. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    const newContent = [...content];
+    newContent[currentPage - 1] = {
+      ...pageContent,
+      pageNumber: currentPage
+    };
+    onChange(newContent);
+    alert('Page saved! Click "Save Course" button to persist to database.');
   };
 
   const renderFileList = (files, type) => (
@@ -177,7 +121,11 @@ const AddContent = ({ courseId, onContentSaved }) => {
       {files.map((file, index) => (
         <li key={index}>
           <span>{file.name}</span>
-          <button className={styles.removeFileBtn} onClick={() => removeFile(type, file.url)}>
+          <button 
+            className={styles.removeFileBtn} 
+            onClick={() => removeFile(type, file.url)}
+            type="button"
+          >
             <X size={16} />
           </button>
         </li>
@@ -187,17 +135,20 @@ const AddContent = ({ courseId, onContentSaved }) => {
   
   return (
     <div className={styles.addContent}>
-      {/* Loading & Status Messages */}
-      {loading && <div className={styles.statusMessage}>Saving...</div>}
-      {success && <div className={`${styles.statusMessage} ${styles.success}`}>Content Saved!</div>}
-      {error && <div className={`${styles.statusMessage} ${styles.error}`}>{error}</div>}
-      
+      <div className={styles.sectionHeader}>
+        <h2>Add Course Content</h2>
+        <p className={styles.info}>
+          Total Pages: {content.length} | Current: Page {currentPage}
+        </p>
+      </div>
+
       {/* Page Navigation */}
       <div className={styles.pageNav}>
         <div className={styles.pageButtons}>
           {contentPages.map(page => (
             <div key={page} className={styles.pageButtonContainer}>
               <button
+                type="button"
                 className={`${styles.pageButton} ${currentPage === page ? styles.active : ''}`}
                 onClick={() => setCurrentPage(page)}
               >
@@ -205,6 +156,7 @@ const AddContent = ({ courseId, onContentSaved }) => {
               </button>
               {contentPages.length > 1 && (
                 <button
+                  type="button"
                   className={styles.deletePageBtn}
                   onClick={() => deletePage(page)}
                 >
@@ -213,18 +165,13 @@ const AddContent = ({ courseId, onContentSaved }) => {
               )}
             </div>
           ))}
-          <button className={styles.addPageBtn} onClick={addPage}>
+          <button type="button" className={styles.addPageBtn} onClick={addPage}>
             <Plus size={16} />
           </button>
         </div>
-        <div className={styles.saveSection}>
-            <button className={styles.saveAllBtn} onClick={handleSaveContent} disabled={loading}>
-                <Save size={16} /> Save All Content
-            </button>
-        </div>
       </div>
       
-      <h2 className={styles.pageTitle}>Edit Page {currentPage}</h2>
+      <h3 className={styles.pageTitle}>Edit Page {currentPage}</h3>
       
       {/* Basic Content Section */}
       <div className={styles.section}>
@@ -255,7 +202,7 @@ const AddContent = ({ courseId, onContentSaved }) => {
             type="number"
             placeholder="Duration (in minutes)"
             value={pageContent.duration}
-            onChange={(e) => handleInputChange('duration', parseInt(e.target.value))}
+            onChange={(e) => handleInputChange('duration', parseInt(e.target.value) || 0)}
             min="0"
           />
         </div>
@@ -298,7 +245,7 @@ const AddContent = ({ courseId, onContentSaved }) => {
         </div>
         <div className={styles.sectionRight}>
           <h4>Uploaded Resources ({pageContent.resources.length})</h4>
-          {renderFileList(pageContent.resources, 'resources')}\
+          {renderFileList(pageContent.resources, 'resources')}
         </div>
       </div>
 
@@ -324,10 +271,11 @@ const AddContent = ({ courseId, onContentSaved }) => {
 
       <div className={styles.pageActions}>
         <button 
+          type="button"
           className={styles.savePageBtn} 
           onClick={saveCurrentPage}
         >
-          Save Current Page
+          <Save size={16} /> Save Current Page
         </button>
       </div>
     </div>

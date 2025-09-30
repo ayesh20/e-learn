@@ -17,7 +17,8 @@ apiClient.interceptors.request.use(
       '/students/login',
       '/students/register',
       '/instructors/login',
-      '/instructors/register'
+      '/instructors/register',
+      '/contact'
     ];
     
     // Check if this is a registration/login request
@@ -337,7 +338,8 @@ export const userAPI = {
 export const enrollmentAPI = {
   getAllEnrollments: () => apiClient.get('/enrollments'),
   getEnrollment: (enrollmentId) => apiClient.get(`/enrollments/${enrollmentId}`),
-  getEnrollmentsByStudent: (studentId) => apiClient.get(`/enrollments/student/${studentId}`),
+  
+  getEnrollmentsByStudent: (studentName) => apiClient.get(`/enrollments/student/${studentName}`),
   getEnrollmentsByCourse: (courseId) => apiClient.get(`/enrollments/course/${courseId}`),
   createEnrollment: (enrollmentData) => apiClient.post('/enrollments', enrollmentData),
   updateEnrollment: (enrollmentId, enrollmentData) => apiClient.put(`/enrollments/${enrollmentId}`, enrollmentData),
@@ -426,6 +428,50 @@ export const uploadAPI = {
   },
 }
 
+// Contact API
+export const contactAPI = {
+  // Create a new contact message (public endpoint - no auth required)
+  createContact: async (contactData) => {
+    try {
+      console.log('Submitting contact form:', contactData);
+      return await apiClient.post('/contact', contactData);
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      throw error;
+    }
+  },
+
+  // Get all contact messages (admin only)
+  getAllContacts: async () => {
+    try {
+      return await apiClient.get('/contact');
+    } catch (error) {
+      console.error('Error fetching contacts:', error);
+      throw error;
+    }
+  },
+
+  // Get contact by email
+  getContactByEmail: async (email) => {
+    try {
+      return await apiClient.get(`/contact/${email}`);
+    } catch (error) {
+      console.error('Error fetching contact by email:', error);
+      throw error;
+    }
+  },
+
+  // Delete contact message by ID (admin only)
+  deleteContact: async (contactId) => {
+    try {
+      return await apiClient.delete(`/contact/${contactId}`);
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+      throw error;
+    }
+  }
+}
+
 // Export the axios instance for custom requests
 export { apiClient }
 
@@ -439,6 +485,7 @@ const api = {
   analytics: analyticsAPI,
   profile: profileAPI,
   upload: uploadAPI,
+  contact: contactAPI,
 }
 
 export default api

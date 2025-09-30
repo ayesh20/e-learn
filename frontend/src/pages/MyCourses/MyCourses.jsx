@@ -15,11 +15,44 @@ const MyCourses = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Get current student info from localStorage
-  const currentStudent = localStorage.getItem('studentName') || 
-                         localStorage.getItem('currentUser') || 
-                         localStorage.getItem('studentId') || 
-                         'guest';
+  // Get current student email from localStorage
+  const currentStudentEmail = (() => {
+    try {
+      // Try to get email from user object in localStorage
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        const userObj = JSON.parse(userData);
+        if (userObj && userObj.email) {
+          console.log('Found email in userData:', userObj.email);
+          return userObj.email.trim();
+        }
+      }
+
+      // Fallback: try other possible keys
+      const possibleKeys = [
+        'studentEmail',
+        'userEmail', 
+        'email',
+        'student_email',
+        'user_email',
+        'currentUserEmail'
+      ];
+      
+      for (const key of possibleKeys) {
+        const email = localStorage.getItem(key);
+        if (email && email.trim()) {
+          console.log(`Found email in ${key}:`, email.trim());
+          return email.trim();
+        }
+      }
+      
+      console.log('No email found in localStorage');
+      return '';
+    } catch (error) {
+      console.error('Error parsing userData from localStorage:', error);
+      return '';
+    }
+  })();
 
   useEffect(() => {
     fetchEnrolledCourses();
@@ -34,35 +67,51 @@ const MyCourses = () => {
   }, [enrolledCourses, selectedCategory]);
 
   const fetchEnrolledCourses = async () => {
+    // Check if valid email exists
+    if (!currentStudentEmail || currentStudentEmail === '') {
+      console.log('No valid student email found. Please login again.');
+      setError('Please login again to view your courses.');
+      setLoading(false);
+      setEnrolledCourses([]);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
-      console.log('Fetching enrollments for student:', currentStudent);
+      console.log('Fetching enrollments for student email:', currentStudentEmail);
 
-      // Fetch enrollments for the current student
-      const enrollmentData = await enrollmentAPI.getEnrollmentsByStudent(currentStudent);
-      
-      console.log('Enrollment API response:', enrollmentData);
+      // Get all enrollments first
+      const allEnrollmentsData = await enrollmentAPI.getAllEnrollments();
+      console.log('All enrollments response:', allEnrollmentsData);
 
-      if (!enrollmentData || !enrollmentData.enrollments) {
-        console.log('No enrollments found');
+      if (!allEnrollmentsData || !allEnrollmentsData.enrollments) {
+        console.log('No enrollments found in database');
         setEnrolledCourses([]);
         return;
       }
 
-      // Filter active enrollments and fetch course details
-      const activeEnrollments = enrollmentData.enrollments.filter(enrollment => 
-        enrollment.enrollmentStatus === 'ENROLLED' || 
-        enrollment.enrollmentStatus === 'IN PROGRESS' ||
-        enrollment.enrollmentStatus === 'COMPLETED'
+      // Filter enrollments by student email
+      const studentEnrollments = allEnrollmentsData.enrollments.filter(enrollment => 
+        enrollment.studentEmail && 
+        enrollment.studentEmail.toLowerCase().trim() === currentStudentEmail.toLowerCase().trim() &&
+        (enrollment.enrollmentStatus === 'ENROLLED' || 
+         enrollment.enrollmentStatus === 'IN PROGRESS' ||
+         enrollment.enrollmentStatus === 'COMPLETED')
       );
 
-      console.log('Active enrollments:', activeEnrollments);
+      console.log('Student enrollments found:', studentEnrollments.length);
+      console.log('Student enrollments:', studentEnrollments);
+
+      if (studentEnrollments.length === 0) {
+        setEnrolledCourses([]);
+        return;
+      }
 
       // Map enrollments to course format with proper data
       const coursesWithDetails = await Promise.all(
-        activeEnrollments.map(async (enrollment) => {
+        studentEnrollments.map(async (enrollment) => {
           try {
             // Try to get course details if courseId exists
             let courseDetails = null;
@@ -73,6 +122,34 @@ const MyCourses = () => {
                 console.log('Could not fetch course details for:', enrollment.courseId);
               }
             }
+            
+            // Course image mapping
+            const getCourseImage = (courseName) => {
+                const imageMap = {
+                    'AWS Certified Solutions Architect': '/images/course1.png',
+                    'UI/UX Design Basics': '/images/course3.jpg',
+                    'Graphic Design Advanced': '/images/course7.jpg',
+                    'Full Stack Development': '/images/img1.jpg',
+                    'React for Beginners': '/images/img2.jpg',
+                    'Digital Marketing Basics': '/images/img3.jpg',
+                    'mmvlbpedfsdsd': '/images/course1.png'
+                };
+                return imageMap[courseName] || '/images/course1.png';
+            };
+
+            const getCourseCategory = (courseName) => {
+                const categoryMap = {
+                    'AWS Certified Solutions Architect': 'AWS',
+                    'Azure Fundamentals': 'Azure',
+                    'Google Cloud Platform': 'Google Cloud',
+                    'UI/UX Design Basics': 'Design',
+                    'Graphic Design Advanced': 'Design',
+                    'Full Stack Development': 'Development',
+                    'React for Beginners': 'Development',
+                    'mmvlbpedfsdsd': 'General'
+                };
+                return categoryMap[courseName] || 'General';
+            };
 
             return {
               id: enrollment._id,
@@ -82,7 +159,7 @@ const MyCourses = () => {
                 `${courseDetails.instructorId.firstName} ${courseDetails.instructorId.lastName}` : 
                 'Instructor',
               progress: enrollment.progress || 0,
-              totalLessons: courseDetails?.content?.length || 7, // Use actual content length or default
+              totalLessons: courseDetails?.content?.length || 7, 
               currentLesson: Math.ceil(((enrollment.progress || 0) / 100) * (courseDetails?.content?.length || 7)) || 1,
               image: courseDetails?.thumbnail || getCourseImage(enrollment.courseName),
               category: courseDetails?.category || getCourseCategory(enrollment.courseName),
@@ -90,7 +167,8 @@ const MyCourses = () => {
               courseData: courseDetails,
               enrollmentStatus: enrollment.enrollmentStatus,
               enrollmentDate: enrollment.enrollmentDate,
-              completionDate: enrollment.completionDate
+              completionDate: enrollment.completionDate,
+              studentEmail: enrollment.studentEmail
             };
           } catch (error) {
             console.error('Error processing enrollment:', error);
@@ -108,7 +186,8 @@ const MyCourses = () => {
               enrollmentData: enrollment,
               enrollmentStatus: enrollment.enrollmentStatus,
               enrollmentDate: enrollment.enrollmentDate,
-              completionDate: enrollment.completionDate
+              completionDate: enrollment.completionDate,
+              studentEmail: enrollment.studentEmail
             };
           }
         })
@@ -130,73 +209,55 @@ const MyCourses = () => {
     try {
       setRecommendedLoading(true);
       
-      // Fetch all courses (remove status filter to get Draft courses too)
+      // Fetch all courses
       const courseData = await courseAPI.getAllCourses({ 
-        limit: 20 // Get more courses to filter out enrolled ones
+        limit: 20
       });
       
       console.log('Fetched courses for recommendations:', courseData);
-      console.log('Raw API response structure:', JSON.stringify(courseData, null, 2));
 
       // Get enrolled course names to filter them out
       const enrolledCourseNames = enrolledCourses.map(course => course.title.toLowerCase());
       
-      // Get courses array from response with detailed logging
+      // Get courses array from response
       let coursesArray = [];
       
       if (courseData.courses && Array.isArray(courseData.courses)) {
         coursesArray = courseData.courses;
-        console.log('Using courseData.courses - Length:', coursesArray.length);
       } else if (courseData.data && Array.isArray(courseData.data)) {
         coursesArray = courseData.data;
-        console.log('Using courseData.data - Length:', coursesArray.length);
       } else if (Array.isArray(courseData)) {
         coursesArray = courseData;
-        console.log('Using courseData directly - Length:', coursesArray.length);
-      } else {
-        console.error('No valid courses array found in response:', courseData);
-        coursesArray = [];
       }
 
-      console.log('All courses before filtering:', coursesArray.map(c => ({ 
-        id: c._id, 
-        title: c.title, 
-        status: c.status 
-      })));
-
+      console.log('All courses before filtering:', coursesArray.length);
       console.log('Enrolled course names to exclude:', enrolledCourseNames);
       
       // Filter out already enrolled courses and limit to 3 for recommendations
       const availableCourses = coursesArray
         .filter(course => {
           const isNotEnrolled = !enrolledCourseNames.includes(course.title?.toLowerCase());
-          console.log(`Course "${course.title}" - Not enrolled: ${isNotEnrolled}`);
           return isNotEnrolled;
         });
 
-      console.log('Available courses after filtering out enrolled:', availableCourses.length);
-
       const filteredRecommended = availableCourses
-        .slice(0, 3) // Show only 3 courses in recommendations
-        .map(course => {
-          console.log('Processing course for recommendation:', course.title, course.status);
-          return {
-            id: course._id || course.id,
-            title: course.title,
-            description: course.description,
-            instructor: course.instructorId ? 
-              `${course.instructorId.firstName} ${course.instructorId.lastName}` : 
-              'Instructor',
-            category: course.category,
-            duration: course.duration,
-            price: course.price,
-            level: course.level,
-            image: course.thumbnail || getCourseImage(course.title),
-            rating: course.rating?.average || course.rating || 0,
-            students: course.enrollmentCount || 0,
-            status: course.status // Include status for debugging
-          };
-        });
+        .slice(0, 4)
+        .map(course => ({
+          id: course._id || course.id,
+          title: course.title,
+          description: course.description,
+          instructor: course.instructorId ? 
+            `${course.instructorId.firstName} ${course.instructorId.lastName}` : 
+            'Instructor',
+          category: course.category,
+          duration: course.duration,
+          price: course.price,
+          level: course.level,
+          image: course.thumbnail || getCourseImage(course.title),
+          rating: course.rating?.average || course.rating || 0,
+          students: course.enrollmentCount || 0,
+          status: course.status
+        }));
       
       setRecommendedCourses(filteredRecommended);
       console.log('Recommended courses:', filteredRecommended);
@@ -216,7 +277,8 @@ const MyCourses = () => {
       'Graphic Design Advanced': '/images/course7.jpg',
       'Full Stack Development': '/images/img1.jpg',
       'React for Beginners': '/images/img2.jpg',
-      'Digital Marketing Basics': '/images/img3.jpg'
+      'Digital Marketing Basics': '/images/img3.jpg',
+      'mmvlbpedfsdsd': '/images/course1.png'
     };
     return imageMap[courseName] || '/images/course1.png';
   };
@@ -229,7 +291,8 @@ const MyCourses = () => {
       'UI/UX Design Basics': 'Design',
       'Graphic Design Advanced': 'Design',
       'Full Stack Development': 'Development',
-      'React for Beginners': 'Development'
+      'React for Beginners': 'Development',
+      'mmvlbpedfsdsd': 'General'
     };
     return categoryMap[courseName] || 'General';
   };
@@ -263,7 +326,7 @@ const MyCourses = () => {
   };
 
   const handleSeeAllCourses = () => {
-    navigate('/courses'); // Navigate to the Courses.jsx page
+    navigate('/courses');
   };
 
   const filterCourses = () => {
@@ -292,7 +355,8 @@ const MyCourses = () => {
         progress: course.progress,
         currentLesson: course.currentLesson,
         totalLessons: course.totalLessons,
-        courseData: course.courseData
+        courseData: course.courseData,
+        studentEmail: course.studentEmail
       }
     });
   };
@@ -388,6 +452,9 @@ const MyCourses = () => {
               <div className="no-courses">
                 <p>You haven't enrolled in any courses yet.</p>
                 <p>Browse our recommended courses below to get started!</p>
+                {currentStudentEmail && (
+                  <small>Logged in as: {currentStudentEmail}</small>
+                )}
               </div>
             )}
           </div>
@@ -433,7 +500,6 @@ const MyCourses = () => {
                         }
                       </p>
                       <div className="card-footer">
-                        
                         <div className="price">
                           {course.price > 0 ? (
                             <>
@@ -460,13 +526,6 @@ const MyCourses = () => {
                   <p>Check back later for new course recommendations!</p>
                 </div>
               )}
-            </div>
-          )}
-
-          {/* See More Button for Recommendations */}
-          {recommendedCourses.length > 0 && (
-            <div className="more-btn">
-              
             </div>
           )}
         </div>

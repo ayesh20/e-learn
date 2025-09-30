@@ -101,8 +101,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route
-            path="/course-details"
+           <Route path="/course-details/:courseId"
             element={
               <PrivateRoute>
                 <CourseDetails />
