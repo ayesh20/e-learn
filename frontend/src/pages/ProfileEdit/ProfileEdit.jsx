@@ -453,7 +453,7 @@ const EditProfile = () => {
             <button 
               type="button" 
               className={styles.cancelBtn}
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/Home')}
             >
               Cancel
             </button>

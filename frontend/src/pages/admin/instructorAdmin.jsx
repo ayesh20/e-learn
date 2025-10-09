@@ -190,7 +190,7 @@ export default function InstructorsAdmin() {
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
-              <th>Expertise</th>
+              
               <th>Experience</th>
               <th>Courses</th>
               <th>Status</th>
@@ -202,23 +202,21 @@ export default function InstructorsAdmin() {
               <tr key={instructor._id}>
                 <td>
                   <img 
-                    src={getImageUrl(instructor.photo)} 
+                    src="/images/user.png"
                     alt={instructor.name || 'Instructor'} 
                     className="product-image"
-                    onError={handleImageError}
+                    
                   />
                 </td>
                 <td className="instructor-name">
-                  <div style={{ fontWeight: 'bold' }}>{instructor.name || 'N/A'}</div>
+                  <div style={{ fontWeight: 'bold' }}>{instructor.firstName || 'N/A'}</div>
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
                     {instructor.title || 'Instructor'}
                   </div>
                 </td>
                 <td className="email">{instructor.email || 'N/A'}</td>
                 <td className="phone">{instructor.phone || 'N/A'}</td>
-                <td>
-                  <div style={{ fontSize: '14px' }}>{instructor.expertise || 'N/A'}</div>
-                </td>
+                
                 <td>{instructor.experience || 'N/A'}</td>
                 <td style={{ textAlign: 'center' }}>
                   <span style={{ 

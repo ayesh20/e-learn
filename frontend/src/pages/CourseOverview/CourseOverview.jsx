@@ -256,26 +256,7 @@ const CourseOverview = () => {
     <div className={styles.courseOverviewPage}>
       <Navbar />
       
-      {/* DEBUG INFO - Remove this in production */}
-      <div style={{
-        position: 'fixed',
-        bottom: '10px',
-        right: '10px',
-        background: 'rgba(0,0,0,0.8)',
-        color: 'white',
-        padding: '10px',
-        borderRadius: '5px',
-        fontSize: '12px',
-        zIndex: 9999,
-        maxWidth: '300px'
-      }}>
-        <strong>Debug Info:</strong><br/>
-        Authenticated: {userInfo.isAuthenticated ? '✅' : '❌'}<br/>
-        Name: {userInfo.studentName || 'N/A'}<br/>
-        Email: {userInfo.studentEmail || 'N/A'}<br/>
-        ID: {userInfo.studentId || 'N/A'}<br/>
-        Token: {localStorage.getItem('authToken') ? '✅' : '❌'}
-      </div>
+      
       
       <div className={styles.courseHero}>
         <div className={styles.heroContent}>
